@@ -31,9 +31,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      await ref
-          .read(authNotifierProvider.notifier)
-          .login(_phoneController.text, _passwordController.text);
+      final notifier = ref.read(authNotifierProvider.notifier);
+      await notifier.login(_phoneController.text, _passwordController.text);
+
+      if (!mounted) return;
 
       final authState = ref.read(authNotifierProvider);
 

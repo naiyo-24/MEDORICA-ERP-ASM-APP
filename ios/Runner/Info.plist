@@ -70,5 +70,11 @@
 	<array>
 		<string>tel</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to capture photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to select images</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save photos to your library</string>
 </dict>
 </plist>

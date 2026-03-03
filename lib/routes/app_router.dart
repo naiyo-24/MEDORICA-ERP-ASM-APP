@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 
 class AppRouter {
@@ -48,23 +48,6 @@ class AppRouter {
           builder: (context, state) => const HomeScreen(),
         ),
       ],
-    );
-  }
-}
-
-/// Placeholder home screen - replace with your actual home screen
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-      ),
-      body: const Center(
-        child: Text('Welcome to Home Screen'),
-      ),
     );
   }
 }

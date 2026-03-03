@@ -63,8 +63,8 @@ class _MRBottomNavBarState extends State<MRBottomNavBar> {
         filledIcon: Iconsax.home5
       ),
       _NavItem(label: 'My Team', 
-      icon: FontAwesomeIcons.teamspeak, 
-      filledIcon: FontAwesomeIcons.teamspeak
+      icon: FontAwesomeIcons.userGroup, 
+      filledIcon: FontAwesomeIcons.userGroup
       ),
       _NavItem(
         label: 'Appointments',
