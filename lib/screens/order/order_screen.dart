@@ -8,6 +8,7 @@ import '../../models/order.dart';
 import '../../providers/order_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
+import '../../widgets/bottom_nav_bar.dart';
 
 class OrderScreen extends ConsumerStatefulWidget {
   const OrderScreen({super.key});
@@ -34,16 +35,13 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
       body: Column(
         children: [
           // Search and Filter Section
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: OrderSearchFilterCard(
-              onSearchChanged: (query) {
-                setState(() => _searchQuery = query);
-              },
-              onStatusFilterChanged: (status) {
-                setState(() => _selectedStatus = status);
-              },
-            ),
+          OrderSearchFilterCard(
+            onSearchChanged: (query) {
+              setState(() => _searchQuery = query);
+            },
+            onStatusFilterChanged: (status) {
+              setState(() => _selectedStatus = status);
+            },
           ),
 
           // Orders List
@@ -79,11 +77,9 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
                       ],
                     ),
                   )
-                : ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 100),
                     itemCount: filteredOrders.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final order = filteredOrders[index];
                       return OrderCard(
@@ -95,6 +91,7 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: const MRBottomNavBar(currentIndex: 2),
     );
   }
 
