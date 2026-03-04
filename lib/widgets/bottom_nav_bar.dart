@@ -46,7 +46,7 @@ class _MRBottomNavBarState extends State<MRBottomNavBar> {
         //context.go(AppRouter.orders);
         break;
       case 3:
-        //context.go(AppRouter.shops);
+        context.go(AppRouter.chemistShops);
         break;
       case 4:
         context.go(AppRouter.distributors);

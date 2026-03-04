@@ -12,8 +12,11 @@ import '../screens/team/team_member_detail_screen.dart';
 import '../screens/distributor/distributor_screen.dart';
 import '../screens/distributor/distributor_detail_screen.dart';
 import '../screens/distributor/add_edit_distributor_screen.dart';
+import '../screens/chemist_shop/chemist_shop_screen.dart';
+import '../screens/chemist_shop/chemist_shop_detail_screen.dart';
 import '../models/team_member.dart';
 import '../models/distributor.dart';
+import '../models/chemist_shop.dart';
 
 class AppRouter {
   // Route paths
@@ -26,6 +29,8 @@ class AppRouter {
   static const String distributors = '/distributors';
   static const String distributorDetail = '/distributor-detail/:distributorId';
   static const String addEditDistributor = '/add-edit-distributor';
+  static const String chemistShops = '/chemist-shops';
+  static const String chemistShopDetail = '/chemist-shop-detail/:shopId';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
 
@@ -92,6 +97,20 @@ class AppRouter {
           builder: (context, state) {
             final distributor = state.extra as Distributor?;
             return AddEditDistributorScreen(distributor: distributor);
+          },
+        ),
+        GoRoute(
+          path: AppRouter.chemistShops,
+          builder: (context, state) => const ChemistShopScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.chemistShopDetail,
+          builder: (context, state) {
+            final shop = state.extra as ChemistShop?;
+            return shop != null
+                ? ChemistShopDetailScreen(shop: shop)
+                : const Scaffold(
+                    body: Center(child: Text('Shop not found')));
           },
         ),
         GoRoute(

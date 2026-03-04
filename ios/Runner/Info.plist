@@ -72,6 +72,8 @@
 		<string>https</string>
 		<string>http</string>
 		<string>whatsapp</string>
+		<string>mailto</string>
+		<string>sms</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to capture photos</string>
