@@ -14,6 +14,7 @@ import '../screens/distributor/distributor_detail_screen.dart';
 import '../screens/distributor/add_edit_distributor_screen.dart';
 import '../screens/chemist_shop/chemist_shop_screen.dart';
 import '../screens/chemist_shop/chemist_shop_detail_screen.dart';
+import '../screens/order/order_screen.dart';
 import '../models/team_member.dart';
 import '../models/distributor.dart';
 import '../models/chemist_shop.dart';
@@ -31,6 +32,7 @@ class AppRouter {
   static const String addEditDistributor = '/add-edit-distributor';
   static const String chemistShops = '/chemist-shops';
   static const String chemistShopDetail = '/chemist-shop-detail/:shopId';
+  static const String orders = '/mr-orders';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
 
@@ -112,6 +114,10 @@ class AppRouter {
                 : const Scaffold(
                     body: Center(child: Text('Shop not found')));
           },
+        ),
+        GoRoute(
+          path: AppRouter.orders,
+          builder: (context, state) => const OrderScreen(),
         ),
         GoRoute(
           path: AppRouter.notifications,
