@@ -17,11 +17,12 @@ class VisualAdsScreen extends ConsumerStatefulWidget {
 class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
   late PageController _pageController;
   int _currentIndex = 0;
+  bool _isTransitioning = false;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 0);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -41,21 +42,29 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
   }
 
   void _nextImage() {
-    if (_currentIndex < _filteredAds.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    if (_isTransitioning || _currentIndex >= _filteredAds.length - 1) return;
+    setState(() => _isTransitioning = true);
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    ).then((_) {
+      setState(() => _isTransitioning = false);
+    }).catchError((_) {
+      setState(() => _isTransitioning = false);
+    });
   }
 
   void _previousImage() {
-    if (_currentIndex > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    if (_isTransitioning || _currentIndex <= 0) return;
+    setState(() => _isTransitioning = true);
+    _pageController.previousPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    ).then((_) {
+      setState(() => _isTransitioning = false);
+    }).catchError((_) {
+      setState(() => _isTransitioning = false);
+    });
   }
 
   List<VisualAd> get _filteredAds => ref.watch(visualAdsFilteredProvider);
@@ -291,12 +300,12 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
                       // Previous Button
                       Container(
                         decoration: BoxDecoration(
-                          color: _currentIndex > 0
+                          color: (_currentIndex > 0 && !_isTransitioning)
                               ? AppColors.white.withAlpha(30)
                               : AppColors.white.withAlpha(15),
                           borderRadius: BorderRadius.circular(AppBorderRadius.md),
                           border: Border.all(
-                            color: _currentIndex > 0
+                            color: (_currentIndex > 0 && !_isTransitioning)
                                 ? AppColors.white.withAlpha(50)
                                 : AppColors.white.withAlpha(20),
                           ),
@@ -306,7 +315,9 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
                             Iconsax.arrow_left_3,
                             color: AppColors.white,
                           ),
-                          onPressed: _currentIndex > 0 ? _previousImage : null,
+                          onPressed: (_currentIndex > 0 && !_isTransitioning)
+                              ? _previousImage
+                              : null,
                         ),
                       ),
 
@@ -335,12 +346,12 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
                       // Next Button
                       Container(
                         decoration: BoxDecoration(
-                          color: _currentIndex < ads.length - 1
+                          color: (_currentIndex < ads.length - 1 && !_isTransitioning)
                               ? AppColors.white.withAlpha(30)
                               : AppColors.white.withAlpha(15),
                           borderRadius: BorderRadius.circular(AppBorderRadius.md),
                           border: Border.all(
-                            color: _currentIndex < ads.length - 1
+                            color: (_currentIndex < ads.length - 1 && !_isTransitioning)
                                 ? AppColors.white.withAlpha(50)
                                 : AppColors.white.withAlpha(20),
                           ),
@@ -350,8 +361,9 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
                             Iconsax.arrow_right_3,
                             color: AppColors.white,
                           ),
-                          onPressed:
-                              _currentIndex < ads.length - 1 ? _nextImage : null,
+                          onPressed: (_currentIndex < ads.length - 1 && !_isTransitioning)
+                              ? _nextImage
+                              : null,
                         ),
                       ),
                     ],

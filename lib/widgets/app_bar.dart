@@ -21,6 +21,7 @@ class MRAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.white,
       elevation: 0,
+      actionsPadding: EdgeInsets.only(left: 4.0),
       leading: showBack
           ? IconButton(
               icon: const Icon(Iconsax.arrow_circle_left, color: AppColors.primary),
