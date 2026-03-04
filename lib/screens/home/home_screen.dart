@@ -4,6 +4,7 @@ import '../../../theme/app_theme.dart';
 import '../../cards/home/attendance_card.dart';
 import '../../cards/home/greeting_card.dart';
 import '../../cards/home/home_footer.dart';
+import '../../cards/home/monthly_target_card.dart';
 import '../../cards/home/quick_actions_card.dart';
 import '../../widgets/ads_carousels.dart';
 import '../../widgets/app_bar.dart';
@@ -25,17 +26,19 @@ class HomeScreen extends ConsumerWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: const [
-              SizedBox(height: AppSpacing.lg),
-              MRGreetingCard(),
-              SizedBox(height: AppSpacing.md),
-              MRAttendanceCard(),
-              SizedBox(height: AppSpacing.md),
-              MRQuickActionsCard(),
-              SizedBox(height: AppSpacing.md),
-              AdsCarousel(height: 500),
-              SizedBox(height: AppSpacing.xl),
-              HomeFooter(),
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              const MRGreetingCard(),
+              const SizedBox(height: AppSpacing.md),
+              const MRAttendanceCard(),
+              const SizedBox(height: AppSpacing.md),
+              const MonthlyTargetCard(),
+              const SizedBox(height: AppSpacing.md),
+              const MRQuickActionsCard(),
+              const SizedBox(height: AppSpacing.md),
+              const AdsCarousel(height: 500),
+              const SizedBox(height: AppSpacing.xl),
+              const HomeFooter(),
             ],
           ),
         ),
