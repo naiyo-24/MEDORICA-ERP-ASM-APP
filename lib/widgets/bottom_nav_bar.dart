@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
+import '../routes/app_router.dart';
 
 class MRBottomNavBar extends StatefulWidget {
   final int currentIndex;
@@ -35,10 +37,10 @@ class _MRBottomNavBarState extends State<MRBottomNavBar> {
     // Navigate based on selected tab using GoRouter
     switch (index) {
       case 0:
-        //context.go(AppRouter.home);
+        context.go(AppRouter.home);
         break;
       case 1:
-        //context.go(AppRouter.doctor);
+        context.go(AppRouter.myTeam);
         break;
       case 2:
         //context.go(AppRouter.appointments);
@@ -47,10 +49,10 @@ class _MRBottomNavBarState extends State<MRBottomNavBar> {
         //context.go(AppRouter.orders);
         break;
       case 4:
-        //context.go(AppRouter.chemist);
+        //context.go(AppRouter.shops);
         break;
       case 5:
-        //context.go(AppRouter.distributor);
+        //context.go(AppRouter.distributors);
         break;
     }
   }

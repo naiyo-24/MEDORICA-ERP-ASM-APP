@@ -5,12 +5,14 @@ import '../screens/auth/login_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/notification/notification_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/team/my_team_screen.dart';
 
 class AppRouter {
   // Route paths
   static const String splash = '/';
   static const String login = '/login';
   static const String home = '/home';
+  static const String myTeam = '/my-team';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
 
@@ -29,6 +31,10 @@ class AppRouter {
         GoRoute(
           path: AppRouter.home,
           builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.myTeam,
+          builder: (context, state) => const MyTeamScreen(),
         ),
         GoRoute(
           path: AppRouter.notifications,
