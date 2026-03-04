@@ -9,7 +9,11 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/team/my_team_screen.dart';
 import '../screens/team/team_members_screen.dart';
 import '../screens/team/team_member_detail_screen.dart';
+import '../screens/distributor/distributor_screen.dart';
+import '../screens/distributor/distributor_detail_screen.dart';
+import '../screens/distributor/add_edit_distributor_screen.dart';
 import '../models/team_member.dart';
+import '../models/distributor.dart';
 
 class AppRouter {
   // Route paths
@@ -19,6 +23,9 @@ class AppRouter {
   static const String myTeam = '/my-team';
   static const String teamMembers = '/team-members/:teamId';
   static const String teamMemberDetail = '/team-member-detail/:memberId';
+  static const String distributors = '/distributors';
+  static const String distributorDetail = '/distributor-detail/:distributorId';
+  static const String addEditDistributor = '/add-edit-distributor';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
 
@@ -57,6 +64,34 @@ class AppRouter {
             return member != null
                 ? TeamMemberDetailScreen(member: member)
                 : const Scaffold(body: Center(child: Text('Member not found')));
+          },
+        ),
+        GoRoute(
+          path: AppRouter.distributors,
+          builder: (context, state) => const DistributorScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.distributorDetail,
+          builder: (context, state) {
+            final distributor = state.extra as Distributor?;
+            return distributor != null
+                ? DistributorDetailScreen(distributor: distributor)
+                : const Scaffold(
+                    body: Center(child: Text('Distributor not found')));
+          },
+        ),
+        GoRoute(
+          path: AppRouter.addEditDistributor,
+          builder: (context, state) {
+            final distributor = state.extra as Distributor?;
+            return AddEditDistributorScreen(distributor: distributor);
+          },
+        ),
+        GoRoute(
+          path: '/add-edit-distributor/:distributorId',
+          builder: (context, state) {
+            final distributor = state.extra as Distributor?;
+            return AddEditDistributorScreen(distributor: distributor);
           },
         ),
         GoRoute(
