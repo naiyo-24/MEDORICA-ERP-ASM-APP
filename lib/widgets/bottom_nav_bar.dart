@@ -73,7 +73,7 @@ class _MRBottomNavBarState extends State<MRBottomNavBar> {
       ),
       
       _NavItem(
-        label: 'MR Orders',
+        label: 'Orders',
         icon: Iconsax.receipt,
         filledIcon: Iconsax.receipt_15,
       ),

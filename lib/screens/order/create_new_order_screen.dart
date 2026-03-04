@@ -25,6 +25,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   late TextEditingController _medicineNameController;
   late TextEditingController _medicineQtyController;
   late TextEditingController _medicinePackController;
+  late TextEditingController _medicineTotalAmountController;
 
   ChemistShop? _selectedShop;
   Doctor? _selectedDoctor;
@@ -40,6 +41,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
     _medicineNameController = TextEditingController();
     _medicineQtyController = TextEditingController();
     _medicinePackController = TextEditingController();
+    _medicineTotalAmountController = TextEditingController();
   }
 
   @override
@@ -49,13 +51,15 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
     _medicineNameController.dispose();
     _medicineQtyController.dispose();
     _medicinePackController.dispose();
+    _medicineTotalAmountController.dispose();
     super.dispose();
   }
 
   void _addMedicine() {
     if (_medicineNameController.text.isEmpty ||
         _medicineQtyController.text.isEmpty ||
-        _medicinePackController.text.isEmpty) {
+        _medicinePackController.text.isEmpty ||
+        _medicineTotalAmountController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill all medicine fields'),
@@ -70,6 +74,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
       name: _medicineNameController.text,
       quantity: int.tryParse(_medicineQtyController.text) ?? 0,
       pack: _medicinePackController.text,
+      totalAmount: double.tryParse(_medicineTotalAmountController.text) ?? 0.0,
     );
 
     setState(() {
@@ -77,6 +82,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
       _medicineNameController.clear();
       _medicineQtyController.clear();
       _medicinePackController.clear();
+      _medicineTotalAmountController.clear();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -92,16 +98,11 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   }
 
   void _saveOrder() {
-    if (_formKey.currentState!.validate() ||
-        _mrNameController.text.isEmpty ||
-        _mrPhoneController.text.isEmpty ||
-        _selectedShop == null ||
-        _selectedDoctor == null ||
-        _selectedDistributor == null ||
+    if (_mrNameController.text.isEmpty  ||
         _medicines.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill all required fields and add medicines'),
+          content: Text('Please fill MR details and add at least one medicine'),
           backgroundColor: Colors.red,
         ),
       );
@@ -112,16 +113,16 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
       id: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
       mrName: _mrNameController.text,
       mrPhoneNo: _mrPhoneController.text,
-      chemistShopName: _selectedShop!.name,
-      chemistShopPhoneNo: _selectedShop!.phoneNo,
-      chemistShopAddress: _selectedShop!.address ?? '',
-      chemistShopId: _selectedShop!.id,
-      doctorName: _selectedDoctor!.name,
-      distributorName: _selectedDistributor!.name,
-      distributorPhoneNo: _selectedDistributor!.phoneNo,
-      distributorAddress: _selectedDistributor!.address ?? '',
-      distributorDeliveryTime: _selectedDistributor!.deliveryTime,
-      distributorId: _selectedDistributor!.id,
+      chemistShopName: _selectedShop?.name ?? '',
+      chemistShopPhoneNo: _selectedShop?.phoneNo ?? '',
+      chemistShopAddress: _selectedShop?.address ?? '',
+      chemistShopId: _selectedShop?.id ?? '',
+      doctorName: _selectedDoctor?.name ?? '',
+      distributorName: _selectedDistributor?.name ?? '',
+      distributorPhoneNo: _selectedDistributor?.phoneNo ?? '',
+      distributorAddress: _selectedDistributor?.address ?? '',
+      distributorDeliveryTime: _selectedDistributor?.deliveryTime ?? '',
+      distributorId: _selectedDistributor?.id ?? '',
       medicines: _medicines,
       status: _selectedStatus,
       createdAt: DateTime.now(),
@@ -202,7 +203,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                   });
                 },
                 icon: Iconsax.shop,
-                isRequired: true,
+                isRequired: false,
               ),
               const SizedBox(height: 24),
 
@@ -220,7 +221,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                     setState(() => _selectedDoctor = doctor);
                   },
                   icon: Iconsax.user,
-                  isRequired: true,
+                  isRequired: false,
                 )
               else
                 Container(
@@ -258,7 +259,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                   setState(() => _selectedDistributor = distributor);
                 },
                 icon: Iconsax.truck,
-                isRequired: true,
+                isRequired: false,
               ),
               const SizedBox(height: 24),
 
@@ -290,6 +291,16 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                       label: 'Pack',
                       hint: 'e.g., Blister',
                       icon: Iconsax.box,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      controller: _medicineTotalAmountController,
+                      label: 'Total Amount',
+                      hint: 'Amount (₹)',
+                      icon: Iconsax.wallet_2,
+                      keyboardType: TextInputType.number,
                     ),
                   ),
                 ],
@@ -368,6 +379,15 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                                     fontSize: 12,
                                   ),
                                 ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Amount: ₹${medicine.totalAmount.toStringAsFixed(2)}',
+                                  style: AppTypography.caption.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -408,7 +428,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                   setState(() => _selectedStatus = status);
                 },
                 icon: Iconsax.status,
-                isRequired: true,
+                isRequired: false,
               ),
               const SizedBox(height: 32),
 

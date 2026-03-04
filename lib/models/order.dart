@@ -3,12 +3,14 @@ class Medicine {
   final String name;
   final int quantity;
   final String pack;
+  final double totalAmount;
 
   Medicine({
     required this.id,
     required this.name,
     required this.quantity,
     required this.pack,
+    required this.totalAmount,
   });
 }
 

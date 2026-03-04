@@ -47,7 +47,7 @@ class MRQuickActionsCard extends StatelessWidget {
       [FontAwesomeIcons.userGroup, 'Team'],
       [Iconsax.shopping_cart, 'My Orders'],
       [Iconsax.location, 'Set Targets'],
-      [Iconsax.calendar_tick, 'Appointments'],
+      [Iconsax.presention_chart, 'Visual Ads'],
       [Iconsax.truck, 'Distributors'],
       [Iconsax.wallet, 'Salary Slip'],
       [Iconsax.shop, 'Chemists'],
