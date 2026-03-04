@@ -1,3 +1,27 @@
+class MonthlyTarget {
+  final String month; // Format: "YYYY-MM" (e.g., "2026-03" for March 2026)
+  final double targetAmount;
+  final DateTime createdAt;
+
+  MonthlyTarget({
+    required this.month,
+    required this.targetAmount,
+    required this.createdAt,
+  });
+
+  MonthlyTarget copyWith({
+    String? month,
+    double? targetAmount,
+    DateTime? createdAt,
+  }) {
+    return MonthlyTarget(
+      month: month ?? this.month,
+      targetAmount: targetAmount ?? this.targetAmount,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+}
+
 class TeamMember {
   final String id;
   final String name;
@@ -8,6 +32,7 @@ class TeamMember {
   final String headquarter;
   final List<String> territories;
   final String teamId;
+  final Map<String, MonthlyTarget>? monthlyTargets; // Key: "YYYY-MM"
 
   TeamMember({
     required this.id,
@@ -19,6 +44,7 @@ class TeamMember {
     required this.headquarter,
     this.territories = const [],
     required this.teamId,
+    this.monthlyTargets,
   });
 
   TeamMember copyWith({
@@ -31,6 +57,7 @@ class TeamMember {
     String? headquarter,
     List<String>? territories,
     String? teamId,
+    Map<String, MonthlyTarget>? monthlyTargets,
   }) {
     return TeamMember(
       id: id ?? this.id,
@@ -42,6 +69,19 @@ class TeamMember {
       headquarter: headquarter ?? this.headquarter,
       territories: territories ?? this.territories,
       teamId: teamId ?? this.teamId,
+      monthlyTargets: monthlyTargets ?? this.monthlyTargets,
     );
+  }
+
+  // Get target for specific month
+  MonthlyTarget? getTargetForMonth(String month) {
+    return monthlyTargets?[month];
+  }
+
+  // Get current month's target
+  MonthlyTarget? getCurrentMonthTarget() {
+    final now = DateTime.now();
+    final currentMonth = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    return monthlyTargets?[currentMonth];
   }
 }

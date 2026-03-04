@@ -169,7 +169,7 @@ class TeamMemberNotifier extends StateNotifier<TeamMemberState> {
         phone: '+91 9876543232',
         altPhone: '+91 9876543233',
         email: 'deepak.kumar@medorica.com',
-        photoUrl: null,
+        photoUrl: 'assets/logo/logo.png',
         headquarter: 'Bangalore',
         territories: ['Telangana', 'Andhra Pradesh'],
         teamId: '3',
@@ -220,5 +220,26 @@ class TeamMemberNotifier extends StateNotifier<TeamMemberState> {
   /// Clear error
   void clearError() {
     state = state.copyWith(error: null);
+  }
+
+  /// Set monthly target for a team member
+  void setMonthlyTarget(String memberId, String month, double targetAmount) {
+    final member = state.members.firstWhere((m) => m.id == memberId);
+    final currentTargets = member.monthlyTargets ?? {};
+    final updatedTargets = Map<String, MonthlyTarget>.from(currentTargets);
+    updatedTargets[month] = MonthlyTarget(
+      month: month,
+      targetAmount: targetAmount,
+      createdAt: DateTime.now(),
+    );
+    
+    final updatedMember = member.copyWith(monthlyTargets: updatedTargets);
+    updateMember(updatedMember);
+  }
+
+  /// Get monthly target for a specific member and month
+  MonthlyTarget? getMonthlyTarget(String memberId, String month) {
+    final member = state.members.firstWhere((m) => m.id == memberId);
+    return member.monthlyTargets?[month];
   }
 }

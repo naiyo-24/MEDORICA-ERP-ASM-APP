@@ -7,6 +7,7 @@ import '../../widgets/app_bar.dart';
 import '../../cards/team_member/team_member_header_card.dart';
 import '../../cards/team_member/team_member_contact_card.dart';
 import '../../cards/team_member/team_member_work_area_card.dart';
+import '../../cards/team_member/target_bottomsheet.dart';
 
 class TeamMemberDetailScreen extends StatelessWidget {
   final TeamMember member;
@@ -45,11 +46,11 @@ class TeamMemberDetailScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Opening monthly target setup for ${member.name}'),
-                        duration: const Duration(seconds: 2),
-                      ),
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => TargetBottomSheet(member: member),
                     );
                   },
                   style: ElevatedButton.styleFrom(
