@@ -30,7 +30,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   Doctor? _selectedDoctor;
   Distributor? _selectedDistributor;
   OrderStatus _selectedStatus = OrderStatus.pending;
-  List<Medicine> _medicines = [];
+  final List<Medicine> _medicines = [];
 
   @override
   void initState() {
