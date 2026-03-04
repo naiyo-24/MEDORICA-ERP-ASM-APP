@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../models/distributor.dart';
 import '../../providers/distributor_provider.dart';
 import '../../theme/app_theme.dart';
@@ -26,6 +28,8 @@ class _AddEditDistributorScreenState
   late TextEditingController _minOrderController;
   late TextEditingController _deliveryTimeController;
   late TextEditingController _descriptionController;
+  File? _selectedImage;
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -44,6 +48,9 @@ class _AddEditDistributorScreenState
         TextEditingController(text: widget.distributor?.deliveryTime);
     _descriptionController =
         TextEditingController(text: widget.distributor?.description);
+    if (widget.distributor?.photoUrl != null) {
+      _selectedImage = File(widget.distributor!.photoUrl!);
+    }
   }
 
   @override
@@ -57,6 +64,24 @@ class _AddEditDistributorScreenState
     _deliveryTimeController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    }
   }
 
   void _saveDistributor() {
@@ -76,7 +101,7 @@ class _AddEditDistributorScreenState
       phoneNo: _phoneController.text,
       email: _emailController.text,
       address: _addressController.text,
-      photoUrl: widget.distributor?.photoUrl,
+      photoUrl: _selectedImage?.path ?? widget.distributor?.photoUrl,
       minimumOrderValue:
           double.tryParse(_minOrderController.text) ?? 10000,
       deliveryTime: _deliveryTimeController.text,
@@ -119,6 +144,91 @@ class _AddEditDistributorScreenState
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Photo Upload Section
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.primaryLight,
+                    width: 2,
+                  ),
+                  color: AppColors.primaryLight.withAlpha(50),
+                ),
+                child: _selectedImage != null
+                    ? Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.file(
+                              _selectedImage!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _selectedImage = null),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withAlpha(100),
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Iconsax.close_circle,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.image,
+                              size: 48,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Upload Distributor Photo',
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tap to select image from gallery',
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.quaternary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 24),
             _buildTextField(
               controller: _nameController,
               label: 'Distributor Name',
