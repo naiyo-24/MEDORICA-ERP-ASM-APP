@@ -20,8 +20,6 @@ class CreateNewOrderScreen extends ConsumerStatefulWidget {
 
 class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _mrNameController;
-  late TextEditingController _mrPhoneController;
   late TextEditingController _medicineNameController;
   late TextEditingController _medicineQtyController;
   late TextEditingController _medicinePackController;
@@ -36,8 +34,6 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   @override
   void initState() {
     super.initState();
-    _mrNameController = TextEditingController();
-    _mrPhoneController = TextEditingController();
     _medicineNameController = TextEditingController();
     _medicineQtyController = TextEditingController();
     _medicinePackController = TextEditingController();
@@ -46,8 +42,6 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
 
   @override
   void dispose() {
-    _mrNameController.dispose();
-    _mrPhoneController.dispose();
     _medicineNameController.dispose();
     _medicineQtyController.dispose();
     _medicinePackController.dispose();
@@ -98,11 +92,10 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   }
 
   void _saveOrder() {
-    if (_mrNameController.text.isEmpty  ||
-        _medicines.isEmpty) {
+    if (_medicines.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill MR details and add at least one medicine'),
+          content: Text('Please add at least one medicine'),
           backgroundColor: Colors.red,
         ),
       );
@@ -111,8 +104,6 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
 
     final order = Order(
       id: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
-      mrName: _mrNameController.text,
-      mrPhoneNo: _mrPhoneController.text,
       chemistShopName: _selectedShop?.name ?? '',
       chemistShopPhoneNo: _selectedShop?.phoneNo ?? '',
       chemistShopAddress: _selectedShop?.address ?? '',
@@ -167,27 +158,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Section 1: MR Information
-              _buildSectionTitle('Area Sales Manager Details'),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: _mrNameController,
-                label: 'ASM Name',
-                hint: 'Enter ASM name',
-                icon: Iconsax.user,
-                isRequired: true,
-              ),
-              const SizedBox(height: 14),
-              _buildTextField(
-                controller: _mrPhoneController,
-                label: 'ASM Phone',
-                hint: 'Enter phone number',
-                icon: Iconsax.call,
-                isRequired: true,
-              ),
-              const SizedBox(height: 24),
-
-              // Section 2: Chemist Shop Selection
+              // Section 1: Chemist Shop Selection
               _buildSectionTitle('Select Chemist Shop'),
               const SizedBox(height: 16),
               _buildDropdown<ChemistShop>(

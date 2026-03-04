@@ -110,27 +110,6 @@ class _OrderDetailsBottomSheetState
                   ),
                   const SizedBox(height: 16),
 
-                  // MR Information
-                  _buildSectionTitle('Medical Representative'),
-                  const SizedBox(height: 10),
-                  _buildContactItem(
-                    icon: Iconsax.user,
-                    label: 'MR Name',
-                    value: widget.order.mrName,
-                    isClickable: false,
-                  ),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () => _launchDialer(widget.order.mrPhoneNo),
-                    child: _buildContactItem(
-                      icon: Iconsax.call,
-                      label: 'MR Phone',
-                      value: widget.order.mrPhoneNo,
-                      isClickable: true,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
                   // Chemist Shop Information
                   _buildSectionTitle('Chemist Shop'),
                   const SizedBox(height: 10),

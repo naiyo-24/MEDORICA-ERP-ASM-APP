@@ -128,9 +128,6 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
       filtered = filtered
           .where((order) =>
               order.id.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              order.mrName
-                  .toLowerCase()
-                  .contains(_searchQuery.toLowerCase()) ||
               order.chemistShopName
                   .toLowerCase()
                   .contains(_searchQuery.toLowerCase()) ||

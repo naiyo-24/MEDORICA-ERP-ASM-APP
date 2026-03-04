@@ -89,29 +89,6 @@ class OrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            // MR Name
-            Row(
-              children: [
-                Icon(
-                  Iconsax.user,
-                  color: AppColors.quaternary,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'MR: ${order.mrName}',
-                    style: AppTypography.body.copyWith(
-                      color: AppColors.quaternary,
-                      fontSize: 12,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
             // Shop Name
             Row(
               children: [

@@ -18,8 +18,6 @@ enum OrderStatus { approved, rejected, pending, cancelled, delivered, received }
 
 class Order {
   final String id;
-  final String mrName;
-  final String mrPhoneNo;
   final String chemistShopName;
   final String chemistShopPhoneNo;
   final String chemistShopAddress;
@@ -36,8 +34,6 @@ class Order {
 
   Order({
     required this.id,
-    required this.mrName,
-    required this.mrPhoneNo,
     required this.chemistShopName,
     required this.chemistShopPhoneNo,
     required this.chemistShopAddress,
@@ -55,8 +51,6 @@ class Order {
 
   Order copyWith({
     String? id,
-    String? mrName,
-    String? mrPhoneNo,
     String? chemistShopName,
     String? chemistShopPhoneNo,
     String? chemistShopAddress,
@@ -73,8 +67,6 @@ class Order {
   }) {
     return Order(
       id: id ?? this.id,
-      mrName: mrName ?? this.mrName,
-      mrPhoneNo: mrPhoneNo ?? this.mrPhoneNo,
       chemistShopName: chemistShopName ?? this.chemistShopName,
       chemistShopPhoneNo: chemistShopPhoneNo ?? this.chemistShopPhoneNo,
       chemistShopAddress: chemistShopAddress ?? this.chemistShopAddress,
