@@ -23,6 +23,7 @@ import '../screens/doctor/doctor_detail_screen.dart';
 import '../screens/doctor/add_edit_doctor_screen.dart';
 import '../screens/appointment/my_appointment_screen.dart';
 import '../screens/appointment/schedule_edit_appointment_screen.dart';
+import '../screens/visual_ads/visual_ads_screen.dart';
 import '../models/team_member.dart';
 import '../models/distributor.dart';
 import '../models/chemist_shop.dart' hide Doctor;
@@ -54,6 +55,7 @@ class AppRouter {
   static const String appointments = '/asm/appointments';
   static const String scheduleAppointment = '/asm/appointments/schedule';
   static const String editAppointment = '/asm/appointments/edit/:appointmentId';
+  static const String visualAds = '/visual-ads';
 
   static GoRouter router(WidgetRef ref) {
     return GoRouter(
@@ -207,6 +209,10 @@ class AppRouter {
             final appointmentId = state.pathParameters['appointmentId'];
             return ScheduleEditAppointmentScreen(appointmentId: appointmentId);
           },
+        ),
+        GoRoute(
+          path: AppRouter.visualAds,
+          builder: (context, state) => const VisualAdsScreen(),
         ),
       ],
     );
