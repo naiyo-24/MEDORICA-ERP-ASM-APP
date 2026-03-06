@@ -5,6 +5,7 @@ import '../../cards/home/attendance_card.dart';
 import '../../cards/home/greeting_card.dart';
 import '../../cards/home/home_footer.dart';
 import '../../cards/home/monthly_target_card.dart';
+import '../../cards/home/month_plan_card.dart';
 import '../../cards/home/quick_actions_card.dart';
 import '../../widgets/ads_carousels.dart';
 import '../../widgets/app_bar.dart';
@@ -31,6 +32,8 @@ class HomeScreen extends ConsumerWidget {
               const MRGreetingCard(),
               const SizedBox(height: AppSpacing.md),
               const MRAttendanceCard(),
+              const SizedBox(height: AppSpacing.md),
+              const MonthPlanCard(),
               const SizedBox(height: AppSpacing.md),
               const MonthlyTargetCard(),
               const SizedBox(height: AppSpacing.md),

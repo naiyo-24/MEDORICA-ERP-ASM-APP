@@ -47,7 +47,7 @@ class MRQuickActionsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       [FontAwesomeIcons.userGroup, 'Team'],
-      [Iconsax.shopping_cart, 'My Orders'],
+      [Iconsax.shopping_cart, 'Orders'],
       [Iconsax.location, 'Set Targets'],
       [Iconsax.presention_chart, 'Visual Ads'],
       [Iconsax.truck, 'Distributors'],

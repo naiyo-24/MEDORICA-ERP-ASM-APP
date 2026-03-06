@@ -28,6 +28,8 @@ import '../models/team_member.dart';
 import '../models/distributor.dart';
 import '../models/chemist_shop.dart' hide Doctor;
 import '../models/doctor.dart';
+import '../screens/month_plan/plan_screen.dart';
+import '../screens/month_plan/create_edit_plan_screen.dart';
 
 class AppRouter {
   // Route paths
@@ -56,6 +58,8 @@ class AppRouter {
   static const String scheduleAppointment = '/asm/appointments/schedule';
   static const String editAppointment = '/asm/appointments/edit/:appointmentId';
   static const String visualAds = '/visual-ads';
+  static const String monthPlans = '/month-plans';
+  static const String createMonthPlan = '/month-plans/create';
 
   static GoRouter router(WidgetRef ref) {
     return GoRouter(
@@ -213,6 +217,14 @@ class AppRouter {
         GoRoute(
           path: AppRouter.visualAds,
           builder: (context, state) => const VisualAdsScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.monthPlans,
+          builder: (context, state) => const PlanScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.createMonthPlan,
+          builder: (context, state) => const CreateEditPlanScreen(),
         ),
       ],
     );
