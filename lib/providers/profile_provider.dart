@@ -2,26 +2,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../notifiers/profile_notifier.dart';
 import '../models/asm.dart';
-import './auth_provider.dart';
+import '../notifiers/auth_notifier.dart';
+import '../services/profile/profile_services.dart';
+import 'auth_provider.dart';
 
 /// Provider for profile state management
-/// 
+///
 /// This provider manages the profile state throughout the app.
 /// Use this to access profile data and trigger profile updates.
 
-final profileNotifierProvider = StateNotifierProvider<ProfileNotifier, ProfileState>(
-  (ref) {
-    final notifier = ProfileNotifier();
-    // Watch auth state and sync profile when user logs in
-    final authState = ref.watch(authNotifierProvider);
-    if (authState.user != null) {
-      notifier.setProfile(authState.user!);
-    } else {
-      notifier.clearProfile();
-    }
-    return notifier;
-  },
-);
+final profileServicesProvider = Provider<ProfileServices>((ref) {
+  return ProfileServices();
+});
+
+final profileNotifierProvider =
+    StateNotifierProvider<ProfileNotifier, ProfileState>((ref) {
+      final notifier = ProfileNotifier(ref.read(profileServicesProvider));
+
+      ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+        notifier.syncAuthState(next);
+      });
+
+      notifier.syncAuthState(ref.read(authNotifierProvider));
+      return notifier;
+    });
 
 /// Computed provider for getting the current profile
 final currentProfileProvider = Provider<ASM?>((ref) {

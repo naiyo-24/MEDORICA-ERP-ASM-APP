@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 /// Model class for Area Sales Manager
 class ASM {
+  static const Object _unset = Object();
+
   final String id;
   final String name;
   final String phone;
@@ -15,7 +17,7 @@ class ASM {
   final String? bankAccountNo;
   final String? ifscCode;
   final String? branchName;
-  final String? mrId;
+  final String? asmId;
   final String? headquarterAssigned;
   final List<String> territoriesOfWork;
   final double? monthlyTarget;
@@ -47,7 +49,7 @@ class ASM {
     this.bankAccountNo,
     this.ifscCode,
     this.branchName,
-    this.mrId,
+    this.asmId,
     this.headquarterAssigned,
     this.territoriesOfWork = const [],
     this.monthlyTarget,
@@ -66,6 +68,15 @@ class ASM {
     this.lastLogin,
   });
 
+  static String? _readString(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
+  }
+
   static double? _readDouble(dynamic value) {
     if (value == null) {
       return null;
@@ -74,6 +85,15 @@ class ASM {
       return value.toDouble();
     }
     return double.tryParse(value.toString());
+  }
+
+  static DateTime? _readDateTime(dynamic value) {
+    final text = _readString(value);
+    if (text == null) {
+      return null;
+    }
+
+    return DateTime.tryParse(text);
   }
 
   static List<String> _readTerritories(dynamic value) {
@@ -93,49 +113,80 @@ class ASM {
     return const [];
   }
 
-  /// Create ASM from JSON
-  factory ASM.fromJson(Map<String, dynamic> json) {
-    final dailyAllowances = _readDouble(json['dailyAllowances']);
-    final basicSalary = _readDouble(json['basicSalary']);
-    final hra = _readDouble(json['hra']);
-    final childrenEducationAllowance = _readDouble(
-      json['childrenEducationAllowance'],
-    );
-    final specialAllowance = _readDouble(json['specialAllowance']);
-    final phoneAllowance = _readDouble(json['phoneAllowance']);
-    final medicalAllowance = _readDouble(json['medicalAllowance']);
-    final esic = _readDouble(json['esic']);
+  factory ASM.fromLoginJson(Map<String, dynamic> json) {
+    final asmId = _readString(json['asm_id']) ?? '';
 
     return ASM(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      email: json['email'] as String,
-      profileImage: json['profileImage'] as String?,
-      altPhone: json['altPhone'] as String?,
-      address: json['address'] as String?,
-      joiningDate: json['joiningDate'] != null
-          ? DateTime.parse(json['joiningDate'] as String)
-          : null,
-      password: json['password'] as String?,
-      bankName: json['bankName'] as String?,
-      bankAccountNo: json['bankAccountNo'] as String?,
-      ifscCode: json['ifscCode'] as String?,
-      branchName: json['branchName'] as String?,
-      mrId: json['mrId'] as String?,
-      headquarterAssigned: json['headquarterAssigned'] as String?,
-      territoriesOfWork: _readTerritories(json['territoriesOfWork']),
-      monthlyTarget: _readDouble(json['monthlyTarget']),
+      id: asmId,
+      name: _readString(json['full_name']) ?? '',
+      phone: _readString(json['phone_no']) ?? '',
+      email: _readString(json['email']) ?? '',
+      asmId: asmId,
+    );
+  }
+
+  /// Create ASM from JSON
+  factory ASM.fromJson(Map<String, dynamic> json) {
+    final dailyAllowances = _readDouble(
+      json['daily_allowances_rupees'] ?? json['dailyAllowances'],
+    );
+    final basicSalary = _readDouble(
+      json['basic_salary_rupees'] ?? json['basicSalary'],
+    );
+    final hra = _readDouble(json['hra_rupees'] ?? json['hra']);
+    final childrenEducationAllowance = _readDouble(
+      json['children_allowances_rupees'] ?? json['childrenEducationAllowance'],
+    );
+    final specialAllowance = _readDouble(
+      json['special_allowances_rupees'] ?? json['specialAllowance'],
+    );
+    final phoneAllowance = _readDouble(
+      json['phone_allowances_rupees'] ?? json['phoneAllowance'],
+    );
+    final medicalAllowance = _readDouble(
+      json['medical_allowances_rupees'] ?? json['medicalAllowance'],
+    );
+    final esic = _readDouble(json['esic_rupees'] ?? json['esic']);
+
+    return ASM(
+      id: _readString(json['id']) ?? '',
+      name: _readString(json['full_name'] ?? json['name']) ?? '',
+      phone: _readString(json['phone_no'] ?? json['phone']) ?? '',
+      email: _readString(json['email']) ?? '',
+      profileImage: _readString(json['profile_photo'] ?? json['profileImage']),
+      altPhone: _readString(json['alt_phone_no'] ?? json['altPhone']),
+      address: _readString(json['address']),
+      joiningDate: _readDateTime(json['joining_date'] ?? json['joiningDate']),
+      password: _readString(json['password']),
+      bankName: _readString(json['bank_name'] ?? json['bankName']),
+      bankAccountNo: _readString(
+        json['bank_account_no'] ?? json['bankAccountNo'],
+      ),
+      ifscCode: _readString(json['ifsc_code'] ?? json['ifscCode']),
+      branchName: _readString(json['branch_name'] ?? json['branchName']),
+      asmId: _readString(json['asm_id'] ?? json['asmId'] ?? json['mr_id']),
+      headquarterAssigned: _readString(
+        json['headquarter_assigned'] ?? json['headquarterAssigned'],
+      ),
+      territoriesOfWork: _readTerritories(
+        json['territories_of_work'] ?? json['territoriesOfWork'],
+      ),
+      monthlyTarget: _readDouble(
+        json['monthly_target_rupees'] ?? json['monthlyTarget'],
+      ),
       basicSalary: basicSalary,
       dailyAllowances: dailyAllowances,
       hra: hra,
       childrenEducationAllowance: childrenEducationAllowance,
-      specialAllowance: _readDouble(json['specialAllowance']),
+      specialAllowance: specialAllowance,
       phoneAllowance: phoneAllowance,
       medicalAllowance: medicalAllowance,
       esic: esic,
       totalMonthlySalary:
-          _readDouble(json['totalMonthlySalary']) ??
+          _readDouble(
+            json['total_monthly_compensation_rupees'] ??
+                json['totalMonthlySalary'],
+          ) ??
           (basicSalary ?? 0) +
               (dailyAllowances ?? 0) +
               (hra ?? 0) +
@@ -144,14 +195,12 @@ class ASM {
               (phoneAllowance ?? 0) +
               (medicalAllowance ?? 0) -
               (esic ?? 0),
-      region: json['region'] as String?,
-      territory: json['territory'] as String?,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      lastLogin: json['lastLogin'] != null
-          ? DateTime.parse(json['lastLogin'] as String)
-          : null,
+      region: _readString(json['region']),
+      territory: _readString(json['territory']),
+      createdAt: _readDateTime(json['created_at'] ?? json['createdAt']),
+      lastLogin: _readDateTime(
+        json['last_login'] ?? json['lastLogin'] ?? json['updated_at'],
+      ),
     );
   }
 
@@ -159,35 +208,35 @@ class ASM {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
-      'phone': phone,
+      'asm_id': asmId,
+      'full_name': name,
+      'phone_no': phone,
       'email': email,
-      'profileImage': profileImage,
-      'altPhone': altPhone,
+      'profile_photo': profileImage,
+      'alt_phone_no': altPhone,
       'address': address,
-      'joiningDate': joiningDate?.toIso8601String(),
+      'joining_date': joiningDate?.toIso8601String(),
       'password': password,
-      'bankName': bankName,
-      'bankAccountNo': bankAccountNo,
-      'ifscCode': ifscCode,
-      'branchName': branchName,
-      'mrId': mrId,
-      'headquarterAssigned': headquarterAssigned,
-      'territoriesOfWork': territoriesOfWork,
-      'monthlyTarget': monthlyTarget,
-      'basicSalary': basicSalary,
-      'dailyAllowances': dailyAllowances,
-      'hra': hra,
-      'childrenEducationAllowance': childrenEducationAllowance,
-      'specialAllowance': specialAllowance,
-      'phoneAllowance': phoneAllowance,
-      'medicalAllowance': medicalAllowance,
-      'esic': esic,
-      'totalMonthlySalary': totalMonthlySalary,
+      'bank_name': bankName,
+      'bank_account_no': bankAccountNo,
+      'ifsc_code': ifscCode,
+      'branch_name': branchName,
+      'headquarter_assigned': headquarterAssigned,
+      'territories_of_work': territoriesOfWork,
+      'monthly_target_rupees': monthlyTarget,
+      'basic_salary_rupees': basicSalary,
+      'daily_allowances_rupees': dailyAllowances,
+      'hra_rupees': hra,
+      'children_allowances_rupees': childrenEducationAllowance,
+      'special_allowances_rupees': specialAllowance,
+      'phone_allowances_rupees': phoneAllowance,
+      'medical_allowances_rupees': medicalAllowance,
+      'esic_rupees': esic,
+      'total_monthly_compensation_rupees': totalMonthlySalary,
       'region': region,
       'territory': territory,
-      'createdAt': createdAt?.toIso8601String(),
-      'lastLogin': lastLogin?.toIso8601String(),
+      'created_at': createdAt?.toIso8601String(),
+      'last_login': lastLogin?.toIso8601String(),
     };
   }
 
@@ -197,17 +246,17 @@ class ASM {
     String? name,
     String? phone,
     String? email,
-    String? profileImage,
-    String? altPhone,
-    String? address,
-    DateTime? joiningDate,
-    String? password,
-    String? bankName,
-    String? bankAccountNo,
-    String? ifscCode,
-    String? branchName,
-    String? mrId,
-    String? headquarterAssigned,
+    Object? profileImage = _unset,
+    Object? altPhone = _unset,
+    Object? address = _unset,
+    Object? joiningDate = _unset,
+    Object? password = _unset,
+    Object? bankName = _unset,
+    Object? bankAccountNo = _unset,
+    Object? ifscCode = _unset,
+    Object? branchName = _unset,
+    Object? asmId = _unset,
+    Object? headquarterAssigned = _unset,
     List<String>? territoriesOfWork,
     double? monthlyTarget,
     double? basicSalary,
@@ -219,27 +268,45 @@ class ASM {
     double? medicalAllowance,
     double? esic,
     double? totalMonthlySalary,
-    String? region,
-    String? territory,
-    DateTime? createdAt,
-    DateTime? lastLogin,
+    Object? region = _unset,
+    Object? territory = _unset,
+    Object? createdAt = _unset,
+    Object? lastLogin = _unset,
   }) {
     return ASM(
       id: id ?? this.id,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       email: email ?? this.email,
-      profileImage: profileImage ?? this.profileImage,
-      altPhone: altPhone ?? this.altPhone,
-      address: address ?? this.address,
-      joiningDate: joiningDate ?? this.joiningDate,
-      password: password ?? this.password,
-      bankName: bankName ?? this.bankName,
-      bankAccountNo: bankAccountNo ?? this.bankAccountNo,
-      ifscCode: ifscCode ?? this.ifscCode,
-      branchName: branchName ?? this.branchName,
-      mrId: mrId ?? this.mrId,
-      headquarterAssigned: headquarterAssigned ?? this.headquarterAssigned,
+      profileImage: identical(profileImage, _unset)
+          ? this.profileImage
+          : profileImage as String?,
+      altPhone: identical(altPhone, _unset)
+          ? this.altPhone
+          : altPhone as String?,
+      address: identical(address, _unset) ? this.address : address as String?,
+      joiningDate: identical(joiningDate, _unset)
+          ? this.joiningDate
+          : joiningDate as DateTime?,
+      password: identical(password, _unset)
+          ? this.password
+          : password as String?,
+      bankName: identical(bankName, _unset)
+          ? this.bankName
+          : bankName as String?,
+      bankAccountNo: identical(bankAccountNo, _unset)
+          ? this.bankAccountNo
+          : bankAccountNo as String?,
+      ifscCode: identical(ifscCode, _unset)
+          ? this.ifscCode
+          : ifscCode as String?,
+      branchName: identical(branchName, _unset)
+          ? this.branchName
+          : branchName as String?,
+      asmId: identical(asmId, _unset) ? this.asmId : asmId as String?,
+      headquarterAssigned: identical(headquarterAssigned, _unset)
+          ? this.headquarterAssigned
+          : headquarterAssigned as String?,
       territoriesOfWork: territoriesOfWork ?? this.territoriesOfWork,
       monthlyTarget: monthlyTarget ?? this.monthlyTarget,
       basicSalary: basicSalary ?? this.basicSalary,
@@ -252,16 +319,22 @@ class ASM {
       medicalAllowance: medicalAllowance ?? this.medicalAllowance,
       esic: esic ?? this.esic,
       totalMonthlySalary: totalMonthlySalary ?? this.totalMonthlySalary,
-      region: region ?? this.region,
-      territory: territory ?? this.territory,
-      createdAt: createdAt ?? this.createdAt,
-      lastLogin: lastLogin ?? this.lastLogin,
+      region: identical(region, _unset) ? this.region : region as String?,
+      territory: identical(territory, _unset)
+          ? this.territory
+          : territory as String?,
+      createdAt: identical(createdAt, _unset)
+          ? this.createdAt
+          : createdAt as DateTime?,
+      lastLogin: identical(lastLogin, _unset)
+          ? this.lastLogin
+          : lastLogin as DateTime?,
     );
   }
 
   @override
   String toString() {
-    return 'ASM(id: $id, name: $name, phone: $phone, email: $email, mrId: $mrId)';
+    return 'ASM(id: $id, name: $name, phone: $phone, email: $email, asmId: $asmId)';
   }
 
   @override
@@ -282,7 +355,7 @@ class ASM {
         other.bankAccountNo == bankAccountNo &&
         other.ifscCode == ifscCode &&
         other.branchName == branchName &&
-        other.mrId == mrId &&
+        other.asmId == asmId &&
         other.headquarterAssigned == headquarterAssigned &&
         listEquals(other.territoriesOfWork, territoriesOfWork) &&
         other.monthlyTarget == monthlyTarget &&
@@ -317,7 +390,7 @@ class ASM {
       bankAccountNo,
       ifscCode,
       branchName,
-      mrId,
+      asmId,
       headquarterAssigned,
       Object.hashAll(territoriesOfWork),
       monthlyTarget,

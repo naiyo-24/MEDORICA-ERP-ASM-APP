@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/asm.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
@@ -39,14 +40,23 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
 
   DateTime? _joiningDate;
   String? _selectedProfileImage;
-  bool _isSaving = false;
   bool _obscurePassword = true;
+  String? _lastSyncedProfileKey;
 
   ASM? get _profile => ref.read(currentProfileProvider);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final asmId = ref.read(authNotifierProvider).asmId;
+      if (asmId != null && asmId.isNotEmpty) {
+        ref
+            .read(profileNotifierProvider.notifier)
+            .loadProfile(asmId, forceRefresh: true);
+      }
+    });
+
     final profile = _profile;
 
     _fullNameController = TextEditingController(text: profile?.name ?? '');
@@ -137,7 +147,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
     });
   }
 
-  void _saveProfile() {
+  Future<void> _saveProfile() async {
     final profile = _profile;
 
     if (profile == null) {
@@ -150,10 +160,6 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
-    setState(() {
-      _isSaving = true;
-    });
 
     final updatedProfile = profile.copyWith(
       name: _fullNameController.text.trim(),
@@ -170,11 +176,28 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
       branchName: _nullableText(_branchNameController),
     );
 
-    ref.read(profileNotifierProvider.notifier).updateProfile(updatedProfile);
+    final success = await ref
+        .read(profileNotifierProvider.notifier)
+        .updateProfile(updatedProfile, profileImagePath: _selectedProfileImage);
 
-    setState(() {
-      _isSaving = false;
-    });
+    if (!mounted) {
+      return;
+    }
+
+    if (!success) {
+      final errorMessage = ref.read(profileErrorProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage ?? 'Unable to update profile')),
+      );
+      return;
+    }
+
+    final latestProfile = ref.read(currentProfileProvider);
+    if (latestProfile != null) {
+      ref
+          .read(authNotifierProvider.notifier)
+          .syncAuthenticatedUser(latestProfile);
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Profile updated successfully')),
@@ -193,7 +216,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
       return Image.network(
         imagePath,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
+        errorBuilder: (_, _, _) =>
             const Icon(Iconsax.user, size: 52, color: AppColors.primary),
       );
     }
@@ -202,7 +225,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
       return Image.asset(
         imagePath,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
+        errorBuilder: (_, _, _) =>
             const Icon(Iconsax.user, size: 52, color: AppColors.primary),
       );
     }
@@ -210,7 +233,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
     return Image.file(
       File(imagePath),
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) =>
+      errorBuilder: (_, _, _) =>
           const Icon(Iconsax.user, size: 52, color: AppColors.primary),
     );
   }
@@ -336,9 +359,37 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
         : 'Rs ${value.toStringAsFixed(2)}';
   }
 
+  void _syncControllersFromProfile(ASM profile) {
+    final asmKey = profile.asmId ?? profile.id;
+    final profileKey = '$asmKey-${profile.hashCode}';
+
+    if (asmKey.isEmpty || _lastSyncedProfileKey == profileKey) {
+      return;
+    }
+
+    _fullNameController.text = profile.name;
+    _phoneController.text = profile.phone;
+    _altPhoneController.text = profile.altPhone ?? '';
+    _emailController.text = profile.email;
+    _addressController.text = profile.address ?? '';
+    _joiningDate = profile.joiningDate;
+    _joiningDateController.text = profile.joiningDate == null
+        ? ''
+        : _dateFormatter.format(profile.joiningDate!);
+    _passwordController.text = profile.password ?? '';
+    _bankNameController.text = profile.bankName ?? '';
+    _bankAccountNoController.text = profile.bankAccountNo ?? '';
+    _ifscCodeController.text = profile.ifscCode ?? '';
+    _branchNameController.text = profile.branchName ?? '';
+    _selectedProfileImage = profile.profileImage;
+    _lastSyncedProfileKey = profileKey;
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(currentProfileProvider);
+    final profileState = ref.watch(profileNotifierProvider);
+    final isSaving = profileState.isLoading;
 
     if (profile == null) {
       return Scaffold(
@@ -367,6 +418,8 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
         ),
       );
     }
+
+    _syncControllersFromProfile(profile);
 
     final territories = profile.territoriesOfWork.isEmpty
         ? (profile.territory ?? 'Not assigned')
@@ -548,8 +601,8 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
                     'These fields are maintained by the organization and cannot be changed here.',
                 children: [
                   _buildReadOnlyField(
-                    label: 'MR ID',
-                    value: profile.mrId ?? profile.id,
+                    label: 'ASM ID',
+                    value: profile.asmId ?? profile.id,
                     icon: Iconsax.profile_2user,
                   ),
                   _buildReadOnlyField(
@@ -622,10 +675,10 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
                 ],
               ),
               ElevatedButton(
-                onPressed: _isSaving ? null : _saveProfile,
+                onPressed: isSaving ? null : _saveProfile,
                 style: AppButtonStyles.primaryButton(height: 52),
                 child: Text(
-                  _isSaving ? 'Saving...' : 'Save Profile',
+                  isSaving ? 'Saving...' : 'Save Profile',
                   style: AppTypography.buttonLarge.copyWith(
                     color: AppColors.white,
                   ),

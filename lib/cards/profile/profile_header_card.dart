@@ -20,7 +20,7 @@ class ProfileHeaderCard extends StatelessWidget {
       return Image.network(
         imagePath,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
+        errorBuilder: (_, _, _) =>
             const Icon(Icons.person, size: 50, color: AppColors.primary),
       );
     }
@@ -29,7 +29,7 @@ class ProfileHeaderCard extends StatelessWidget {
       return Image.asset(
         imagePath,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
+        errorBuilder: (_, _, _) =>
             const Icon(Icons.person, size: 50, color: AppColors.primary),
       );
     }
@@ -37,7 +37,7 @@ class ProfileHeaderCard extends StatelessWidget {
     return Image.file(
       File(imagePath),
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) =>
+      errorBuilder: (_, _, _) =>
           const Icon(Icons.person, size: 50, color: AppColors.primary),
     );
   }
@@ -96,10 +96,10 @@ class ProfileHeaderCard extends StatelessWidget {
               // Phone
               Column(
                 children: [
-                  const Icon(Icons.phone, color: AppColors.primary, size: 24),
+                  const Icon(Icons.perm_identity, color: AppColors.primary, size: 24),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    profile.phone,
+                    profile.asmId ?? profile.id,
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.quaternary,
                     ),
@@ -107,28 +107,7 @@ class ProfileHeaderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              // Divider
-              Container(width: 1, height: 50, color: AppColors.border),
-              // Territory
-              Column(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: AppColors.primary,
-                    size: 24,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    profile.territoriesOfWork.isNotEmpty
-                        ? profile.territoriesOfWork.join(', ')
-                        : (profile.territory ?? 'Not Assigned'),
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.quaternary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+              // ASM ID
             ],
           ),
         ],

@@ -1,17 +1,20 @@
 import 'package:flutter_riverpod/legacy.dart';
 import '../models/asm.dart';
+import '../services/profile/auth_services.dart';
 
 /// Authentication state class
 class AuthState {
   final bool isAuthenticated;
   final bool isLoading;
   final ASM? user;
+  final String? asmId;
   final String? error;
 
   AuthState({
     this.isAuthenticated = false,
     this.isLoading = false,
     this.user,
+    this.asmId,
     this.error,
   });
 
@@ -19,12 +22,14 @@ class AuthState {
     bool? isAuthenticated,
     bool? isLoading,
     ASM? user,
+    String? asmId,
     String? error,
   }) {
     return AuthState(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
       user: user ?? this.user,
+      asmId: asmId ?? this.asmId,
       error: error,
     );
   }
@@ -32,103 +37,52 @@ class AuthState {
 
 /// Authentication notifier for managing auth state
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(AuthState());
+  AuthNotifier(this._authServices) : super(AuthState());
+
+  final AuthServices _authServices;
 
   /// Login with phone number and password
-  /// Accepts any phone number and password for frontend testing
   Future<void> login(String phone, String password) async {
-    // Set loading state
     state = state.copyWith(isLoading: true, error: null);
 
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1));
-
     try {
-      // Validate phone number
-      if (phone.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Phone number is required.',
-        );
+      final trimmedPhone = phone.trim();
+      if (trimmedPhone.isEmpty) {
+        state = AuthState(error: 'Phone number is required.');
         return;
       }
 
-      // Validate password
       if (password.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Password is required.',
-        );
+        state = AuthState(error: 'Password is required.');
         return;
       }
 
-      // Clean phone number (remove spaces, dashes, etc.)
-      final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
-
-      // Generate user from phone number for frontend testing
-      const basicSalary = 35000.0;
-      const dailyAllowances = 5000.0;
-      const hra = 8000.0;
-      const childrenEducationAllowance = 2000.0;
-      const specialAllowance = 1500.0;
-      const phoneAllowance = 1000.0;
-      const medicalAllowance = 1200.0;
-      const esic = 750.0;
-      final defaultTerritories = ['Central Kolkata', 'North Kolkata'];
-      final user = ASM(
-        id: cleanPhone.hashCode.toString(),
-        name: 'ASM User',
-        phone: cleanPhone,
-        altPhone: '',
-        email: 'asm_$cleanPhone@medorica.com',
-        address: 'Medorica Pharma Office, Kolkata',
-        joiningDate: DateTime.now().subtract(const Duration(days: 365 * 2)),
+      final user = await _authServices.login(
+        phone: trimmedPhone,
         password: password,
-        bankName: 'State Bank of India',
-        bankAccountNo: '123456789012',
-        ifscCode: 'SBIN0000123',
-        branchName: 'Park Street',
-        mrId:
-            'MR-${cleanPhone.length >= 6 ? cleanPhone.substring(cleanPhone.length - 6) : cleanPhone}',
-        headquarterAssigned: 'Kolkata',
-        territoriesOfWork: defaultTerritories,
-        monthlyTarget: 250000,
-        basicSalary: basicSalary,
-        dailyAllowances: dailyAllowances,
-        hra: hra,
-        childrenEducationAllowance: childrenEducationAllowance,
-        specialAllowance: specialAllowance,
-        phoneAllowance: phoneAllowance,
-        medicalAllowance: medicalAllowance,
-        esic: esic,
-        totalMonthlySalary:
-            basicSalary +
-            dailyAllowances +
-            hra +
-            childrenEducationAllowance +
-            specialAllowance +
-            phoneAllowance +
-            medicalAllowance -
-            esic,
-        region: 'Default Region',
-        territory: defaultTerritories.join(', '),
-        createdAt: DateTime.now(),
-        lastLogin: DateTime.now(),
       );
+      final asmId = user.asmId ?? user.id;
 
-      // Update state with authenticated user
       state = state.copyWith(
         isAuthenticated: true,
         isLoading: false,
         user: user,
+        asmId: asmId,
         error: null,
       );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An error occurred during login. Please try again.',
-      );
+    } catch (error) {
+      state = AuthState(error: _readErrorMessage(error));
     }
+  }
+
+  void syncAuthenticatedUser(ASM profile) {
+    state = state.copyWith(
+      isAuthenticated: true,
+      isLoading: false,
+      user: profile,
+      asmId: profile.asmId ?? profile.id,
+      error: null,
+    );
   }
 
   /// Logout current user
@@ -146,4 +100,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// Get current user
   ASM? get currentUser => state.user;
+
+  String _readErrorMessage(Object error) {
+    final message = error.toString();
+    if (message.startsWith('Exception: ')) {
+      return message.substring('Exception: '.length);
+    }
+    return message;
+  }
 }

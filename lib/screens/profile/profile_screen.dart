@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
 import '../../cards/profile/profile_header_card.dart';
 import '../../cards/profile/profile_options_card.dart';
 import '../../widgets/app_bar.dart';
@@ -7,12 +8,43 @@ import '../../providers/profile_provider.dart';
 import '../../routes/app_router.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final asmId = ref.read(authNotifierProvider).asmId;
+      if (asmId != null && asmId.isNotEmpty) {
+        ref
+            .read(profileNotifierProvider.notifier)
+            .loadProfile(asmId, forceRefresh: true);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
     final profileState = ref.watch(profileNotifierProvider);
+
+    if (profileState.isLoading && profileState.profile == null) {
+      return const Scaffold(
+        appBar: MRAppBar(
+          showBack: true,
+          showActions: false,
+          titleText: 'My Profile',
+          subtitleText: 'Loading your profile',
+        ),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: MRAppBar(
@@ -60,11 +92,25 @@ class ProfileScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('No profile data available'),
+                  Text(
+                    profileState.error ?? 'No profile data available',
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.go(AppRouter.home),
-                    child: const Text('Go to Home'),
+                    onPressed: () {
+                      final asmId = authState.asmId;
+                      if (asmId != null && asmId.isNotEmpty) {
+                        ref
+                            .read(profileNotifierProvider.notifier)
+                            .loadProfile(asmId, forceRefresh: true);
+                      } else {
+                        ref
+                            .read(profileNotifierProvider.notifier)
+                            .refreshProfile();
+                      }
+                    },
+                    child: const Text('Retry'),
                   ),
                 ],
               ),
