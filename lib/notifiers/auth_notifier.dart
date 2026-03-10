@@ -66,13 +66,52 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
 
       // Generate user from phone number for frontend testing
+      const basicSalary = 35000.0;
+      const dailyAllowances = 5000.0;
+      const hra = 8000.0;
+      const childrenEducationAllowance = 2000.0;
+      const specialAllowance = 1500.0;
+      const phoneAllowance = 1000.0;
+      const medicalAllowance = 1200.0;
+      const esic = 750.0;
+      final defaultTerritories = ['Central Kolkata', 'North Kolkata'];
       final user = ASM(
         id: cleanPhone.hashCode.toString(),
         name: 'ASM User',
         phone: cleanPhone,
+        altPhone: '',
         email: 'asm_$cleanPhone@medorica.com',
+        address: 'Medorica Pharma Office, Kolkata',
+        joiningDate: DateTime.now().subtract(const Duration(days: 365 * 2)),
+        password: password,
+        bankName: 'State Bank of India',
+        bankAccountNo: '123456789012',
+        ifscCode: 'SBIN0000123',
+        branchName: 'Park Street',
+        mrId:
+            'MR-${cleanPhone.length >= 6 ? cleanPhone.substring(cleanPhone.length - 6) : cleanPhone}',
+        headquarterAssigned: 'Kolkata',
+        territoriesOfWork: defaultTerritories,
+        monthlyTarget: 250000,
+        basicSalary: basicSalary,
+        dailyAllowances: dailyAllowances,
+        hra: hra,
+        childrenEducationAllowance: childrenEducationAllowance,
+        specialAllowance: specialAllowance,
+        phoneAllowance: phoneAllowance,
+        medicalAllowance: medicalAllowance,
+        esic: esic,
+        totalMonthlySalary:
+            basicSalary +
+            dailyAllowances +
+            hra +
+            childrenEducationAllowance +
+            specialAllowance +
+            phoneAllowance +
+            medicalAllowance -
+            esic,
         region: 'Default Region',
-        territory: 'Default Territory',
+        territory: defaultTerritories.join(', '),
         createdAt: DateTime.now(),
         lastLogin: DateTime.now(),
       );

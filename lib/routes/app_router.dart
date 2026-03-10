@@ -6,6 +6,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/notification/notification_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/profile/update_profile_screen.dart';
 import '../screens/team/my_team_screen.dart';
 import '../screens/team/team_members_screen.dart';
 import '../screens/team/team_member_detail_screen.dart';
@@ -50,6 +51,7 @@ class AppRouter {
   static const String createOrder = '/create-order';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
+  static const String updateProfile = '/profile/update';
   static const String aboutUs = '/about-us';
   static const String doctors = '/asm/doctor';
   static const String addDoctor = '/asm/doctor/add';
@@ -110,7 +112,8 @@ class AppRouter {
             return distributor != null
                 ? DistributorDetailScreen(distributor: distributor)
                 : const Scaffold(
-                    body: Center(child: Text('Distributor not found')));
+                    body: Center(child: Text('Distributor not found')),
+                  );
           },
         ),
         GoRoute(
@@ -137,8 +140,7 @@ class AppRouter {
             final shop = state.extra as ChemistShop?;
             return shop != null
                 ? ChemistShopDetailScreen(shop: shop)
-                : const Scaffold(
-                    body: Center(child: Text('Shop not found')));
+                : const Scaffold(body: Center(child: Text('Shop not found')));
           },
         ),
         GoRoute(
@@ -170,6 +172,10 @@ class AppRouter {
         GoRoute(
           path: AppRouter.profile,
           builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.updateProfile,
+          builder: (context, state) => const UpdateProfileScreen(),
         ),
         GoRoute(
           path: AppRouter.aboutUs,

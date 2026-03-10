@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../models/asm.dart';
 import '../../theme/app_theme.dart';
@@ -5,10 +7,40 @@ import '../../theme/app_theme.dart';
 class ProfileHeaderCard extends StatelessWidget {
   final ASM profile;
 
-  const ProfileHeaderCard({
-    super.key,
-    required this.profile,
-  });
+  const ProfileHeaderCard({super.key, required this.profile});
+
+  Widget _buildProfileImage() {
+    final imagePath = profile.profileImage;
+
+    if (imagePath == null || imagePath.isEmpty) {
+      return const Icon(Icons.person, size: 50, color: AppColors.primary);
+    }
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.person, size: 50, color: AppColors.primary),
+      );
+    }
+
+    if (imagePath.startsWith('assets/')) {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.person, size: 50, color: AppColors.primary),
+      );
+    }
+
+    return Image.file(
+      File(imagePath),
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) =>
+          const Icon(Icons.person, size: 50, color: AppColors.primary),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +63,14 @@ class ProfileHeaderCard extends StatelessWidget {
               color: AppColors.primaryLight,
               border: Border.all(color: AppColors.primary, width: 3),
             ),
-            child: profile.profileImage != null
-                ? ClipOval(
-                    child: Image.asset(
-                      profile.profileImage!,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : const Icon(
-                    Icons.person,
-                    size: 50,
-                    color: AppColors.primary,
-                  ),
+            child: ClipOval(child: _buildProfileImage()),
           ),
           const SizedBox(height: AppSpacing.lg),
 
           // Name
           Text(
             profile.name,
-            style: AppTypography.h3.copyWith(
-              color: AppColors.primary,
-            ),
+            style: AppTypography.h3.copyWith(color: AppColors.primary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -89,18 +108,20 @@ class ProfileHeaderCard extends StatelessWidget {
                 ],
               ),
               // Divider
-              Container(
-                width: 1,
-                height: 50,
-                color: AppColors.border,
-              ),
+              Container(width: 1, height: 50, color: AppColors.border),
               // Territory
               Column(
                 children: [
-                  const Icon(Icons.location_on, color: AppColors.primary, size: 24),
+                  const Icon(
+                    Icons.location_on,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    profile.territory ?? 'Not Assigned',
+                    profile.territoriesOfWork.isNotEmpty
+                        ? profile.territoriesOfWork.join(', ')
+                        : (profile.territory ?? 'Not Assigned'),
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.quaternary,
                     ),

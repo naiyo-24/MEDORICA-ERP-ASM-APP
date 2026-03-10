@@ -30,23 +30,27 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
                   // Profile Options Card
                   ProfileOptionsCard(
-                    onUpdateProfile: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Update Profile feature coming soon')),
-                      );
-                    },
+                    onUpdateProfile: () =>
+                        context.push(AppRouter.updateProfile),
                     onAboutUs: () => context.push(AppRouter.aboutUs),
                     onContactSupport: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Contact Support feature coming soon')),
+                        const SnackBar(
+                          content: Text('Contact Support feature coming soon'),
+                        ),
                       );
                     },
                     onSalarySlip: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Salary Slip download feature coming soon')),
+                        const SnackBar(
+                          content: Text(
+                            'Salary Slip download feature coming soon',
+                          ),
+                        ),
                       );
                     },
-                    onNotifications: () => context.push(AppRouter.notifications),
+                    onNotifications: () =>
+                        context.push(AppRouter.notifications),
                   ),
                   const SizedBox(height: 20),
                 ],
