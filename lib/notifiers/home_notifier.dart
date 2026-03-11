@@ -1,14 +1,13 @@
 import 'package:flutter_riverpod/legacy.dart';
+import '../models/attendance.dart';
 import '../models/monthly_target.dart';
+import '../services/attendance/attendance_services.dart';
 
 class HomeState {
   final DateTime selectedMonth;
   final Map<String, HomeMonthlyTarget> monthlyTargets;
 
-  const HomeState({
-    required this.selectedMonth,
-    required this.monthlyTargets,
-  });
+  const HomeState({required this.selectedMonth, required this.monthlyTargets});
 
   HomeMonthlyTarget get selectedMonthTarget {
     final key = _monthKey(selectedMonth.year, selectedMonth.month);
@@ -32,13 +31,16 @@ class HomeState {
 }
 
 class HomeNotifier extends StateNotifier<HomeState> {
-  HomeNotifier()
-      : super(
-          HomeState(
-            selectedMonth: DateTime(DateTime.now().year, DateTime.now().month),
-            monthlyTargets: _seedMonthlyTargets(),
-          ),
-        );
+  HomeNotifier({AttendanceServices? attendanceServices})
+    : _attendanceServices = attendanceServices ?? AttendanceServices(),
+      super(
+        HomeState(
+          selectedMonth: DateTime(DateTime.now().year, DateTime.now().month),
+          monthlyTargets: _seedMonthlyTargets(),
+        ),
+      );
+
+  final AttendanceServices _attendanceServices;
 
   static Map<String, HomeMonthlyTarget> _seedMonthlyTargets() {
     final now = DateTime.now();
@@ -64,9 +66,7 @@ class HomeNotifier extends StateNotifier<HomeState> {
       ),
     ];
 
-    return {
-      for (final target in targets) target.monthKey: target,
-    };
+    return {for (final target in targets) target.monthKey: target};
   }
 
   void setSelectedMonthYear({required int year, required int month}) {
@@ -74,15 +74,21 @@ class HomeNotifier extends StateNotifier<HomeState> {
   }
 
   void upsertMonthlyTarget(HomeMonthlyTarget target) {
-    final updatedTargets = Map<String, HomeMonthlyTarget>.from(state.monthlyTargets)
-      ..[target.monthKey] = target;
+    final updatedTargets = Map<String, HomeMonthlyTarget>.from(
+      state.monthlyTargets,
+    )..[target.monthKey] = target;
 
     state = state.copyWith(monthlyTargets: updatedTargets);
   }
 
-  void updateAchievedAmount({required int year, required int month, required double achievedAmount}) {
+  void updateAchievedAmount({
+    required int year,
+    required int month,
+    required double achievedAmount,
+  }) {
     final key = _monthKey(year, month);
-    final existing = state.monthlyTargets[key] ??
+    final existing =
+        state.monthlyTargets[key] ??
         HomeMonthlyTarget(
           month: DateTime(year, month),
           targetAmount: 0,
@@ -91,6 +97,10 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
     upsertMonthlyTarget(existing.copyWith(achievedAmount: achievedAmount));
   }
+
+  Future<Attendance?> fetchTodaysAttendance(String asmId) {
+    return _attendanceServices.fetchTodaysAttendance(asmId: asmId);
+  }
 }
 
 String _monthKey(int year, int month) {
@@ -98,6 +108,8 @@ String _monthKey(int year, int month) {
   return '$year-$monthString';
 }
 
-final homeNotifierProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
+final homeNotifierProvider = StateNotifierProvider<HomeNotifier, HomeState>((
+  ref,
+) {
   return HomeNotifier();
 });

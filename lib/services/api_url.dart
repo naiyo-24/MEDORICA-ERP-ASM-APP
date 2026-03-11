@@ -23,4 +23,9 @@ class ApiUrl {
 
   // About Us Endpoints
   static const String aboutUsGetAll = '/about-us/get-all';
+
+  // ASM Attendance Endpoints
+  static const String asmAttendancePost = '/attendance/asm/post';
+  static String asmAttendanceGetByAsmId(String asmId) =>
+      '/attendance/asm/get-by/$asmId';
 }
