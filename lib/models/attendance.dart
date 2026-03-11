@@ -99,12 +99,17 @@ class Attendance {
 
 DateTime? _readDateTime(dynamic value) {
   if (value == null) return null;
-  if (value is DateTime) return value;
+  if (value is DateTime) return value.isUtc ? value.toLocal() : value;
 
   final asString = value.toString().trim();
   if (asString.isEmpty) return null;
 
-  return DateTime.tryParse(asString);
+  final parsed = DateTime.tryParse(asString);
+  if (parsed == null) {
+    return null;
+  }
+
+  return parsed.isUtc ? parsed.toLocal() : parsed;
 }
 
 String? _readString(dynamic value) {

@@ -12,8 +12,9 @@ class MRAttendanceCard extends ConsumerWidget {
 
   String _formatTime(DateTime? t) {
     if (t == null) return '-';
-    final h = t.hour.toString().padLeft(2, '0');
-    final m = t.minute.toString().padLeft(2, '0');
+    final localTime = t.toLocal();
+    final h = localTime.hour.toString().padLeft(2, '0');
+    final m = localTime.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
 
