@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../models/team_member.dart';
 import '../../theme/app_theme.dart';
 import 'package:iconsax/iconsax.dart';
@@ -9,21 +8,8 @@ class TeamMemberHeaderCard extends StatelessWidget {
 
   const TeamMemberHeaderCard({super.key, required this.member});
 
-  String _formatCurrency(double amount) {
-    final formatter = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 0,
-    );
-    return formatter.format(amount);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final currentTarget = member.getCurrentMonthTarget();
-    final now = DateTime.now();
-    final currentMonthName = DateFormat.MMMM().format(now);
-
     return Container(
       height: 220,
       decoration: BoxDecoration(
@@ -41,20 +27,14 @@ class TeamMemberHeaderCard extends StatelessWidget {
           ? Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  member.photoUrl!,
-                  fit: BoxFit.cover,
-                ),
+                Image.network(member.photoUrl!, fit: BoxFit.cover),
                 // Dark overlay
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withAlpha(150),
-                      ],
+                      colors: [Colors.transparent, Colors.black.withAlpha(150)],
                     ),
                   ),
                 ),
@@ -76,11 +56,7 @@ class TeamMemberHeaderCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(
-                            Iconsax.call,
-                            color: AppColors.white,
-                            size: 16,
-                          ),
+                          Icon(Iconsax.call, color: AppColors.white, size: 16),
                           const SizedBox(width: 8),
                           Text(
                             member.phone,
@@ -90,38 +66,6 @@ class TeamMemberHeaderCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      if (currentTarget != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.white.withAlpha(200),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Iconsax.chart,
-                                color: AppColors.primary,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '$currentMonthName Target: ${_formatCurrency(currentTarget.targetAmount)}',
-                                style: AppTypography.caption.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -137,11 +81,7 @@ class TeamMemberHeaderCard extends StatelessWidget {
                     color: AppColors.white.withAlpha(200),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Icon(
-                    Iconsax.user,
-                    color: AppColors.primary,
-                    size: 50,
-                  ),
+                  child: Icon(Iconsax.user, color: AppColors.primary, size: 50),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -156,11 +96,7 @@ class TeamMemberHeaderCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Iconsax.call,
-                      color: AppColors.white,
-                      size: 16,
-                    ),
+                    Icon(Iconsax.call, color: AppColors.white, size: 16),
                     const SizedBox(width: 8),
                     Text(
                       member.phone,
@@ -170,38 +106,6 @@ class TeamMemberHeaderCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (currentTarget != null) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withAlpha(200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Iconsax.chart,
-                          color: AppColors.primary,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '$currentMonthName Target: ${_formatCurrency(currentTarget.targetAmount)}',
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             ),
     );

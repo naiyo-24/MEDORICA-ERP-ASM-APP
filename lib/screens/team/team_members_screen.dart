@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../models/team_member.dart';
 import '../../widgets/app_bar.dart';
 import '../../cards/team_member/team_member_card.dart';
-import '../../providers/team_member_provider.dart';
+import '../../providers/team_provider.dart';
 
 class TeamMembersScreen extends ConsumerWidget {
   final String teamId;
@@ -17,41 +18,54 @@ class TeamMembersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allMembers = ref.watch(allTeamMembersProvider);
-    final isLoading = ref.watch(isTeamMembersLoadingProvider);
-    
-    // Filter members by team ID
-    final teamMembers = allMembers.where((m) => m.teamId == teamId).toList();
+    final isLoading = ref.watch(isTeamsLoadingProvider);
+    final team = ref.watch(teamByIdProvider(teamId));
+    final error = ref.watch(teamErrorProvider);
+
+    final teamMembers = (team?.teamMembers ?? const []).map((member) {
+      return TeamMember(
+        id: member.mrId,
+        name: member.fullName,
+        phone: member.phoneNo,
+        altPhone: member.altPhoneNo,
+        email: member.email,
+        photoUrl: member.profilePhoto,
+        headquarter: member.headquarterAssigned ?? '-',
+        territories: member.territoriesOfWork,
+        teamId: teamId,
+      );
+    }).toList();
 
     return Scaffold(
       appBar: MRAppBar(
         showBack: true,
         showActions: false,
-        titleText: teamName,
+        titleText: team?.name.isNotEmpty == true ? team!.name : teamName,
         subtitleText: '${teamMembers.length} members',
         onBack: () => context.pop(),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
+          : error != null && error.isNotEmpty
+          ? Center(child: Text(error))
+          : team == null
+          ? const Center(child: Text('Team not found'))
           : teamMembers.isEmpty
-              ? const Center(
-                  child: Text('No team members available'),
-                )
-              : ListView.builder(
-                  itemCount: teamMembers.length,
-                  itemBuilder: (context, index) {
-                    return TeamMemberCard(
-                      member: teamMembers[index],
-                      onTap: () {
-                        ref.read(selectedTeamMemberProvider);
-                        context.push(
-                          '/team-member-detail/${teamMembers[index].id}',
-                          extra: teamMembers[index],
-                        );
-                      },
+          ? const Center(child: Text('No team members available'))
+          : ListView.builder(
+              itemCount: teamMembers.length,
+              itemBuilder: (context, index) {
+                return TeamMemberCard(
+                  member: teamMembers[index],
+                  onTap: () {
+                    context.push(
+                      '/team-member-detail/${teamMembers[index].id}',
+                      extra: teamMembers[index],
                     );
                   },
-                ),
+                );
+              },
+            ),
     );
   }
 }

@@ -197,13 +197,17 @@ class TeamMemberNotifier extends StateNotifier<TeamMemberState> {
 
   /// Update member
   void updateMember(TeamMember member) {
-    final updatedMembers = state.members.map((m) => m.id == member.id ? member : m).toList();
+    final updatedMembers = state.members
+        .map((m) => m.id == member.id ? member : m)
+        .toList();
     state = state.copyWith(members: updatedMembers);
   }
 
   /// Delete member
   void deleteMember(String memberId) {
-    final filteredMembers = state.members.where((m) => m.id != memberId).toList();
+    final filteredMembers = state.members
+        .where((m) => m.id != memberId)
+        .toList();
     state = state.copyWith(members: filteredMembers);
   }
 
@@ -220,26 +224,5 @@ class TeamMemberNotifier extends StateNotifier<TeamMemberState> {
   /// Clear error
   void clearError() {
     state = state.copyWith(error: null);
-  }
-
-  /// Set monthly target for a team member
-  void setMonthlyTarget(String memberId, String month, double targetAmount) {
-    final member = state.members.firstWhere((m) => m.id == memberId);
-    final currentTargets = member.monthlyTargets ?? {};
-    final updatedTargets = Map<String, MonthlyTarget>.from(currentTargets);
-    updatedTargets[month] = MonthlyTarget(
-      month: month,
-      targetAmount: targetAmount,
-      createdAt: DateTime.now(),
-    );
-    
-    final updatedMember = member.copyWith(monthlyTargets: updatedTargets);
-    updateMember(updatedMember);
-  }
-
-  /// Get monthly target for a specific member and month
-  MonthlyTarget? getMonthlyTarget(String memberId, String month) {
-    final member = state.members.firstWhere((m) => m.id == memberId);
-    return member.monthlyTargets?[month];
   }
 }

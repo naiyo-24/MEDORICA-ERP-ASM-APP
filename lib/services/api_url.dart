@@ -3,7 +3,7 @@ class ApiUrl {
   // Use 127.0.0.1 or localhost for iOS Simulator
   static const String baseUrl = 'http://10.0.2.2:8000';
 
-  // ASM Auth and Profile Endpoints
+  // ASM Auth
   static const String asmLogin = '/onboarding/asm/login';
 
   // Profile Endpoints
@@ -33,4 +33,7 @@ class ApiUrl {
   static const String asmAttendancePost = '/attendance/asm/post';
   static String asmAttendanceGetByAsmId(String asmId) =>
       '/attendance/asm/get-by/$asmId';
+
+  // Team Endpoints
+  static String teamGetByAsmId(String asmId) => '/team/get-by-asm/$asmId';
 }

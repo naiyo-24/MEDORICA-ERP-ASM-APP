@@ -9,11 +9,7 @@ class TeamCard extends StatelessWidget {
   final Team team;
   final VoidCallback? onTap;
 
-  const TeamCard({
-    super.key,
-    required this.team,
-    this.onTap,
-  });
+  const TeamCard({super.key, required this.team, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -78,27 +74,6 @@ class TeamCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              // Headquarters and Territory
-              Row(
-                children: [
-                  Expanded(
-                    child: _InfoItem(
-                      icon: Iconsax.location,
-                      label: 'Headquarter',
-                      value: team.headquarter,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _InfoItem(
-                      icon: Iconsax.map,
-                      label: 'Territory',
-                      value: team.territory,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
               // Description
               Text(
                 'About',
@@ -117,64 +92,67 @@ class TeamCard extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (team.members.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          context.push(
-                            '/team-members/${team.id}',
-                            extra: team.name,
+              const SizedBox(height: 14),
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.push(
+                          '/team-members/${team.id}',
+                          extra: team.name,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryLight,
+                        foregroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      icon: const Icon(Iconsax.people, size: 18),
+                      label: const Text('View Members'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if (team.groupLink != null &&
+                            team.groupLink!.isNotEmpty) {
+                          GroupLinkBottomSheet.show(
+                            context,
+                            team.name,
+                            team.groupLink!,
                           );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryLight,
-                          foregroundColor: AppColors.primary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'No group link available for ${team.name}',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryLight,
+                        foregroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        icon: const Icon(Iconsax.people, size: 18),
-                        label: const Text('View Members'),
                       ),
+                      icon: const Icon(Iconsax.link, size: 18),
+                      label: const Text('Get Group Link'),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          if (team.groupLink != null && team.groupLink!.isNotEmpty) {
-                            GroupLinkBottomSheet.show(
-                              context,
-                              team.name,
-                              team.groupLink!,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('No group link available for ${team.name}')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryLight,
-                          foregroundColor: AppColors.primary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        icon: const Icon(Iconsax.link, size: 18),
-                        label: const Text('Get Group Link'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -183,57 +161,3 @@ class TeamCard extends StatelessWidget {
   }
 }
 
-class _InfoItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight.withAlpha(80),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: AppColors.primary,
-                size: 16,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.quaternary,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: AppTypography.bodyLarge.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-}
