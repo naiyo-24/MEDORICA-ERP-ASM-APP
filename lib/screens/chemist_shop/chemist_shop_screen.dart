@@ -65,7 +65,6 @@ class _ChemistShopScreenState extends ConsumerState<ChemistShopScreen> {
               // Search and Filter
               ChemistShopSearchFilterCard(
                 onSearch: (query) => setState(() => _searchQuery = query),
-                onFilterChange: (filter) {},
               ),
               // Body
               Expanded(

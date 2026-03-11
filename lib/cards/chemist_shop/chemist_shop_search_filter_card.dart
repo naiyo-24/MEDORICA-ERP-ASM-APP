@@ -4,13 +4,8 @@ import '../../theme/app_theme.dart';
 
 class ChemistShopSearchFilterCard extends StatefulWidget {
   final Function(String) onSearch;
-  final Function(String?) onFilterChange;
 
-  const ChemistShopSearchFilterCard({
-    super.key,
-    required this.onSearch,
-    required this.onFilterChange,
-  });
+  const ChemistShopSearchFilterCard({super.key, required this.onSearch});
 
   @override
   State<ChemistShopSearchFilterCard> createState() =>
@@ -20,7 +15,6 @@ class ChemistShopSearchFilterCard extends StatefulWidget {
 class _ChemistShopSearchFilterCardState
     extends State<ChemistShopSearchFilterCard> {
   late TextEditingController _searchController;
-  String? _selectedFilter;
 
   @override
   void initState() {
@@ -37,11 +31,11 @@ class _ChemistShopSearchFilterCardState
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withAlpha(12),
@@ -66,45 +60,16 @@ class _ChemistShopSearchFilterCardState
                 prefixIcon: const Icon(
                   Iconsax.search_normal,
                   color: AppColors.quaternary,
-                  size: 20,
+                  size: 18,
                 ),
                 prefixIconConstraints: const BoxConstraints(
-                  minWidth: 40,
-                  minHeight: 40,
+                  minWidth: 34,
+                  minHeight: 34,
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 6),
               ),
               style: AppTypography.body.copyWith(color: AppColors.primary),
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 24,
-            color: AppColors.primaryLight,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-          ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              setState(() => _selectedFilter = value);
-              widget.onFilterChange(value);
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(value: 'all', child: Text('All Shops')),
-              const PopupMenuItem(
-                value: 'popular',
-                child: Text('Most Popular'),
-              ),
-              const PopupMenuItem(value: 'nearest', child: Text('Nearest')),
-            ],
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Iconsax.setting_3,
-                color: _selectedFilter != null
-                    ? AppColors.primary
-                    : AppColors.quaternary,
-                size: 24,
-              ),
             ),
           ),
         ],
