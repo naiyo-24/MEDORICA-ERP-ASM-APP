@@ -1,3 +1,5 @@
+import '../services/api_url.dart';
+
 class Doctor {
   final String id;
   final String name;
@@ -13,35 +15,64 @@ class Doctor {
 }
 
 class ChemistShop {
-  final String id;
-  final String name;
-  final String location;
+  final String id; // shop_id
+  final String? asmId;
+  final String name; // shop_name
+  final String? location; // derived from address
   final String? photoUrl;
-  final String mrName;
+  final String? bankPassbookPhotoUrl;
+  final String? mrName;
   final String? email;
   final String? address;
   final String phoneNo;
-  final String description;
+  final String? description;
   final List<Doctor> doctors;
 
   ChemistShop({
     required this.id,
+    this.asmId,
     required this.name,
-    required this.location,
+    this.location,
     this.photoUrl,
-    required this.mrName,
+    this.bankPassbookPhotoUrl,
+    this.mrName,
     this.email,
     this.address,
     required this.phoneNo,
-    required this.description,
-    required this.doctors,
+    this.description,
+    this.doctors = const [],
   });
+
+  factory ChemistShop.fromJson(Map<String, dynamic> json) {
+    final address = json['address'] as String?;
+    final rawPhoto = json['photo'] as String?;
+    final rawBankPhoto = json['bank_passbook_photo'] as String?;
+    return ChemistShop(
+      id: json['shop_id'] as String,
+      asmId: json['asm_id'] as String?,
+      name: json['shop_name'] as String,
+      address: address,
+      location: address,
+      phoneNo: json['phone_no'] as String,
+      email: json['email'] as String?,
+      description: json['description'] as String?,
+      photoUrl: rawPhoto != null && rawPhoto.isNotEmpty
+          ? ApiUrl.getFullUrl(rawPhoto)
+          : null,
+      bankPassbookPhotoUrl: rawBankPhoto != null && rawBankPhoto.isNotEmpty
+          ? ApiUrl.getFullUrl(rawBankPhoto)
+          : null,
+      doctors: const [],
+    );
+  }
 
   ChemistShop copyWith({
     String? id,
+    String? asmId,
     String? name,
     String? location,
     String? photoUrl,
+    String? bankPassbookPhotoUrl,
     String? mrName,
     String? email,
     String? address,
@@ -51,9 +82,11 @@ class ChemistShop {
   }) {
     return ChemistShop(
       id: id ?? this.id,
+      asmId: asmId ?? this.asmId,
       name: name ?? this.name,
       location: location ?? this.location,
       photoUrl: photoUrl ?? this.photoUrl,
+      bankPassbookPhotoUrl: bankPassbookPhotoUrl ?? this.bankPassbookPhotoUrl,
       mrName: mrName ?? this.mrName,
       email: email ?? this.email,
       address: address ?? this.address,

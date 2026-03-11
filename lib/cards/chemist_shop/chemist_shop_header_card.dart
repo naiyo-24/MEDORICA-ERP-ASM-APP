@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'dart:io';
 import '../../models/chemist_shop.dart';
+import '../../services/api_url.dart';
 import '../../theme/app_theme.dart';
 
 class ChemistShopHeaderCard extends StatelessWidget {
@@ -11,6 +12,10 @@ class ChemistShopHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedPhotoUrl = _resolvePhotoUrl(shop.photoUrl);
+    final shouldUseNetworkImage =
+        resolvedPhotoUrl != null && resolvedPhotoUrl.startsWith('http');
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       height: 280,
@@ -33,19 +38,19 @@ class ChemistShopHeaderCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary.withAlpha(180),
-                ],
+                colors: [AppColors.primary, AppColors.primary.withAlpha(180)],
               ),
             ),
-            child: shop.photoUrl != null && shop.photoUrl!.isNotEmpty
+            child: resolvedPhotoUrl != null && resolvedPhotoUrl.isNotEmpty
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.file(
-                      File(shop.photoUrl!),
-                      fit: BoxFit.cover,
-                    ),
+                    child: shouldUseNetworkImage
+                        ? Image.network(
+                            resolvedPhotoUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const SizedBox(),
+                          )
+                        : Image.file(File(resolvedPhotoUrl), fit: BoxFit.cover),
                   )
                 : null,
           ),
@@ -70,36 +75,34 @@ class ChemistShopHeaderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // MR Badge at top
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withAlpha(220),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Iconsax.user,
-                        color: AppColors.primary,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'MR: ${shop.mrName}',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
+                // Shop ID Badge at top
+                if (shop.asmId != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withAlpha(220),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Iconsax.shop, color: AppColors.primary, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          shop.id,
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                if (shop.asmId == null) const SizedBox(),
                 // Name and Location at bottom
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,29 +118,31 @@ class ChemistShopHeaderCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Icon(
-                          Iconsax.location,
-                          color: AppColors.white,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            shop.location,
-                            style: AppTypography.body.copyWith(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                    if (shop.location != null && shop.location!.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Icon(
+                            Iconsax.location,
+                            color: AppColors.white,
+                            size: 18,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              shop.location!,
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -146,5 +151,16 @@ class ChemistShopHeaderCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _resolvePhotoUrl(String? rawPath) {
+    if (rawPath == null || rawPath.isEmpty) return null;
+    if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
+      return ApiUrl.getFullUrl(rawPath);
+    }
+    if (rawPath.startsWith('uploads/') || rawPath.startsWith('/uploads/')) {
+      return ApiUrl.getFullUrl(rawPath);
+    }
+    return rawPath;
   }
 }

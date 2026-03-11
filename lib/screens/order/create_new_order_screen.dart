@@ -133,7 +133,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final shops = ref.watch(chemistShopNotifierProvider);
+    final shops = ref.watch(chemistShopNotifierProvider).shops;
     final distributors = ref.watch(distributorListProvider);
 
     return Scaffold(

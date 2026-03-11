@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../cards/chemist_shop/chemist_shop_contact_card.dart';
 import '../../cards/chemist_shop/chemist_shop_description_card.dart';
-import '../../cards/chemist_shop/chemist_shop_doctors_card.dart';
 import '../../cards/chemist_shop/chemist_shop_header_card.dart';
 import '../../models/chemist_shop.dart';
 import '../../theme/app_theme.dart';
@@ -62,9 +61,7 @@ class _ChemistShopDetailScreenState extends State<ChemistShopDetailScreen> {
             // Description Card
             ChemistShopDescriptionCard(shop: widget.shop),
             
-            // Doctors Card
-            ChemistShopDoctorsCard(shop: widget.shop),
-            
+
             // Contact Card
             ChemistShopContactCard(shop: widget.shop),
             

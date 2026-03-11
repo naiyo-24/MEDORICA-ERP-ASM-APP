@@ -38,7 +38,7 @@ class ChemistShopDescriptionCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              shop.description,
+              shop.description ?? '',
               style: AppTypography.body.copyWith(
                 color: AppColors.quaternary,
                 height: 1.6,

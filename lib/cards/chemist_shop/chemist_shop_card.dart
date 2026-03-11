@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'dart:io';
 import '../../models/chemist_shop.dart';
+import '../../services/api_url.dart';
 import '../../theme/app_theme.dart';
 
 class ChemistShopCard extends StatelessWidget {
@@ -20,6 +21,10 @@ class ChemistShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedPhotoUrl = _resolvePhotoUrl(shop.photoUrl);
+    final shouldUseNetworkImage =
+        resolvedPhotoUrl != null && resolvedPhotoUrl.startsWith('http');
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -50,21 +55,31 @@ class ChemistShopCard extends StatelessWidget {
                 ),
                 color: AppColors.primaryLight,
               ),
-              child: shop.photoUrl != null && shop.photoUrl!.isNotEmpty
+              child: resolvedPhotoUrl != null && resolvedPhotoUrl.isNotEmpty
                   ? ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: Image.file(
-                        File(shop.photoUrl!),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildDefaultPhotoContainer();
-                        },
-                      ),
+                      child: shouldUseNetworkImage
+                          ? Image.network(
+                              resolvedPhotoUrl,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildDefaultPhotoContainer();
+                              },
+                            )
+                          : Image.file(
+                              File(resolvedPhotoUrl),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildDefaultPhotoContainer();
+                              },
+                            ),
                     )
                   : _buildDefaultPhotoContainer(),
             ),
@@ -129,30 +144,32 @@ class ChemistShopCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Location
-                  Row(
-                    children: [
-                      Icon(
-                        Iconsax.location,
-                        color: AppColors.quaternary,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          shop.location,
-                          style: AppTypography.body.copyWith(
-                            color: AppColors.quaternary,
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  // Location / Address
+                  if (shop.location != null && shop.location!.isNotEmpty)
+                    Row(
+                      children: [
+                        Icon(
+                          Iconsax.location,
+                          color: AppColors.quaternary,
+                          size: 16,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  // MR Name
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            shop.location!,
+                            style: AppTypography.body.copyWith(
+                              color: AppColors.quaternary,
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (shop.location != null && shop.location!.isNotEmpty)
+                    const SizedBox(height: 10),
+                  // Phone
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -169,14 +186,10 @@ class ChemistShopCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Iconsax.user,
-                          color: AppColors.primary,
-                          size: 14,
-                        ),
+                        Icon(Iconsax.call, color: AppColors.primary, size: 14),
                         const SizedBox(width: 6),
                         Text(
-                          'Added by: ${shop.mrName}',
+                          shop.phoneNo,
                           style: AppTypography.caption.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
@@ -202,11 +215,7 @@ class ChemistShopCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Iconsax.image,
-              size: 56,
-              color: AppColors.primary,
-            ),
+            Icon(Iconsax.image, size: 56, color: AppColors.primary),
             const SizedBox(height: 8),
             Text(
               'No Photo',
@@ -219,5 +228,16 @@ class ChemistShopCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String? _resolvePhotoUrl(String? rawPath) {
+    if (rawPath == null || rawPath.isEmpty) return null;
+    if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
+      return ApiUrl.getFullUrl(rawPath);
+    }
+    if (rawPath.startsWith('uploads/') || rawPath.startsWith('/uploads/')) {
+      return ApiUrl.getFullUrl(rawPath);
+    }
+    return rawPath;
   }
 }

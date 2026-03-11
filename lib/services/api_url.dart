@@ -18,7 +18,25 @@ class ApiUrl {
 
   // Helper method to get full URL
   static String getFullUrl(String endpoint) {
-    return '$baseUrl$endpoint';
+    final trimmed = endpoint.trim();
+    if (trimmed.isEmpty) {
+      return baseUrl;
+    }
+
+    // If already absolute, normalize common malformed case:
+    // http://host:portuploads/... -> http://host:port/uploads/...
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      if (trimmed.startsWith(baseUrl)) {
+        final suffix = trimmed.substring(baseUrl.length);
+        if (suffix.isNotEmpty && !suffix.startsWith('/')) {
+          return '$baseUrl/$suffix';
+        }
+      }
+      return trimmed;
+    }
+
+    final normalized = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+    return '$baseUrl$normalized';
   }
 
   // About Us Endpoints
@@ -51,4 +69,15 @@ class ApiUrl {
   ) => '/doctor-network/asm/update-by/$asmId/$doctorId';
   static String doctorNetworkDeleteByDoctorId(String doctorId) =>
       '/doctor-network/asm/delete-by/$doctorId';
+
+  // ASM Chemist Shop Network Endpoints
+  static const String chemistShopPost = '/chemist-shop/asm/post';
+  static String chemistShopGetByAsmId(String asmId) =>
+      '/chemist-shop/asm/get-by-asm/$asmId';
+  static String chemistShopGetByAsmAndShopId(String asmId, String shopId) =>
+      '/chemist-shop/asm/get-by/$asmId/$shopId';
+  static String chemistShopUpdateByAsmAndShopId(String asmId, String shopId) =>
+      '/chemist-shop/asm/update-by/$asmId/$shopId';
+  static String chemistShopDeleteByAsmAndShopId(String asmId, String shopId) =>
+      '/chemist-shop/asm/delete-by/$asmId/$shopId';
 }
