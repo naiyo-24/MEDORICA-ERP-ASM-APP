@@ -12,7 +12,7 @@ class DistributorDescriptionCard extends StatelessWidget {
     final description = distributor.description?.trim();
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),

@@ -63,14 +63,20 @@ class _DistributorDetailScreenState
           return SingleChildScrollView(
             controller: _scrollController,
             physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                DistributorHeaderCard(distributor: distributor),
-                DistributorOrderInfoCard(distributor: distributor),
-                DistributorDescriptionCard(distributor: distributor),
-                DistributorContactCard(distributor: distributor),
-                const SizedBox(height: 24),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenPaddingHorizontal,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.lg),
+                  DistributorHeaderCard(distributor: distributor),
+                  DistributorOrderInfoCard(distributor: distributor),
+                  DistributorDescriptionCard(distributor: distributor),
+                  DistributorContactCard(distributor: distributor),
+                  const SizedBox(height: AppSpacing.xl),
+                ],
+              ),
             ),
           );
         },
