@@ -54,7 +54,7 @@ class DistributorOrderInfoCard extends StatelessWidget {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight.withAlpha(100),
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: AppColors.primaryLight.withAlpha(150),
@@ -112,10 +112,10 @@ class DistributorOrderInfoCard extends StatelessWidget {
                       vertical: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.quaternary.withAlpha(60),
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: AppColors.quaternary.withAlpha(100),
+                        color: AppColors.primaryLight.withAlpha(150),
                         width: 1,
                       ),
                     ),
@@ -127,7 +127,7 @@ class DistributorOrderInfoCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.quaternary.withAlpha(200),
+                                color: AppColors.primaryLight,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
@@ -206,7 +206,7 @@ class _InfoStrip extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.disabledColor.withAlpha(80),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.primaryLight, width: 1),
       ),

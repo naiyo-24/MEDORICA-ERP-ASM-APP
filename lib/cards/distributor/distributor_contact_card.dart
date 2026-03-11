@@ -146,7 +146,7 @@ class _ContactItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withAlpha(100),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: AppColors.primaryLight.withAlpha(150),

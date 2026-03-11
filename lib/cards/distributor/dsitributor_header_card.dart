@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import '../../models/distributor.dart';
 import '../../theme/app_theme.dart';
 
@@ -108,38 +107,8 @@ class DistributorHeaderCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Iconsax.location,
-                          color: AppColors.white,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            distributor.location ?? 'Location not available',
-                            style: AppTypography.body.copyWith(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
                       ],
                     ),
-                    if (distributor.paymentTerms != null &&
-                        distributor.paymentTerms!.isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        'Payment: ${distributor.paymentTerms}',
-                        style: AppTypography.body.copyWith(
-                          color: AppColors.white.withAlpha(220),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ],

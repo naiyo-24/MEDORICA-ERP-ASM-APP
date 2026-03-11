@@ -163,33 +163,7 @@ class DistributorCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          distributor.paymentTerms ??
-                              'Payment terms not specified',
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        distributor.minimumOrderValue == null
-                            ? 'MOQ NA'
-                            : 'MOQ ₹${distributor.minimumOrderValue!.toStringAsFixed(0)}',
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.quaternary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
+                  
                 ],
               ),
             ),
