@@ -28,7 +28,7 @@ class ChemistShopCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
@@ -85,7 +85,7 @@ class ChemistShopCard extends StatelessWidget {
             ),
             // Content Section
             Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -169,36 +169,7 @@ class ChemistShopCard extends StatelessWidget {
                     ),
                   if (shop.location != null && shop.location!.isNotEmpty)
                     const SizedBox(height: 10),
-                  // Phone
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLight.withAlpha(100),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppColors.primaryLight.withAlpha(150),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Iconsax.call, color: AppColors.primary, size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          shop.phoneNo,
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  
                 ],
               ),
             ),

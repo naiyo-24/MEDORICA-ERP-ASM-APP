@@ -48,120 +48,127 @@ class _ChemistShopScreenState extends ConsumerState<ChemistShopScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.surface,
         appBar: const MRAppBar(
           showBack: false,
           showActions: false,
           titleText: 'Chemist Shops',
           subtitleText: 'Manage your retail partners',
         ),
-        body: Column(
-          children: [
-            // Search and Filter
-            ChemistShopSearchFilterCard(
-              onSearch: (query) => setState(() => _searchQuery = query),
-              onFilterChange: (filter) {},
-            ),
-            // Body
-            Expanded(
-              child: shopState.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : shopState.error != null
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingHorizontal,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              // Search and Filter
+              ChemistShopSearchFilterCard(
+                onSearch: (query) => setState(() => _searchQuery = query),
+                onFilterChange: (filter) {},
+              ),
+              // Body
+              Expanded(
+                child: shopState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : shopState.error != null
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Iconsax.warning_2,
+                                size: 64,
+                                color: AppColors.quaternary,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                shopState.error!,
+                                style: AppTypography.body.copyWith(
+                                  color: AppColors.quaternary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  final asmId = ref
+                                      .read(authNotifierProvider)
+                                      .asmId;
+                                  if (asmId != null) {
+                                    ref
+                                        .read(
+                                          chemistShopNotifierProvider.notifier,
+                                        )
+                                        .loadShopsByAsmId(asmId);
+                                  }
+                                },
+                                icon: const Icon(Iconsax.refresh),
+                                label: const Text('Retry'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: AppColors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : filteredShops.isEmpty
+                    ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Iconsax.warning_2,
-                              size: 64,
-                              color: AppColors.quaternary,
+                              Iconsax.shop,
+                              size: 80,
+                              color: AppColors.primaryLight,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 24),
                             Text(
-                              shopState.error!,
-                              style: AppTypography.body.copyWith(
+                              'No Chemist Shops Found',
+                              style: AppTypography.h3.copyWith(
                                 color: AppColors.quaternary,
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                final asmId = ref
-                                    .read(authNotifierProvider)
-                                    .asmId;
-                                if (asmId != null) {
-                                  ref
-                                      .read(
-                                        chemistShopNotifierProvider.notifier,
-                                      )
-                                      .loadShopsByAsmId(asmId);
-                                }
-                              },
-                              icon: const Icon(Iconsax.refresh),
-                              label: const Text('Retry'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: AppColors.white,
+                            const SizedBox(height: 8),
+                            Text(
+                              'Add your first chemist shop to get started',
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.quaternary,
                               ),
                             ),
                           ],
                         ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        itemCount: filteredShops.length,
+                        itemBuilder: (context, index) {
+                          final shop = filteredShops[index];
+                          return ChemistShopCard(
+                            shop: shop,
+                            onTap: () {
+                              context.push(
+                                '/chemist-shop-detail/${shop.id}',
+                                extra: shop,
+                              );
+                            },
+                            onEdit: () {
+                              context.push(
+                                '/add-edit-chemist-shop/${shop.id}',
+                                extra: shop,
+                              );
+                            },
+                            onDelete: () => _showDeleteConfirmation(shop),
+                          );
+                        },
                       ),
-                    )
-                  : filteredShops.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Iconsax.shop,
-                            size: 80,
-                            color: AppColors.primaryLight,
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            'No Chemist Shops Found',
-                            style: AppTypography.h3.copyWith(
-                              color: AppColors.quaternary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Add your first chemist shop to get started',
-                            style: AppTypography.body.copyWith(
-                              color: AppColors.quaternary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: filteredShops.length,
-                      itemBuilder: (context, index) {
-                        final shop = filteredShops[index];
-                        return ChemistShopCard(
-                          shop: shop,
-                          onTap: () {
-                            context.push(
-                              '/chemist-shop-detail/${shop.id}',
-                              extra: shop,
-                            );
-                          },
-                          onEdit: () {
-                            context.push(
-                              '/add-edit-chemist-shop/${shop.id}',
-                              extra: shop,
-                            );
-                          },
-                          onDelete: () => _showDeleteConfirmation(shop),
-                        );
-                      },
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => context.push(AppRouter.addEditChemistShop),

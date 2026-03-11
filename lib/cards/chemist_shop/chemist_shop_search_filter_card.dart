@@ -37,7 +37,7 @@ class _ChemistShopSearchFilterCardState
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -89,24 +89,20 @@ class _ChemistShopSearchFilterCardState
               widget.onFilterChange(value);
             },
             itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(
-                value: 'all',
-                child: Text('All Shops'),
-              ),
+              const PopupMenuItem(value: 'all', child: Text('All Shops')),
               const PopupMenuItem(
                 value: 'popular',
                 child: Text('Most Popular'),
               ),
-              const PopupMenuItem(
-                value: 'nearest',
-                child: Text('Nearest'),
-              ),
+              const PopupMenuItem(value: 'nearest', child: Text('Nearest')),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Icon(
                 Iconsax.setting_3,
-                color: _selectedFilter != null ? AppColors.primary : AppColors.quaternary,
+                color: _selectedFilter != null
+                    ? AppColors.primary
+                    : AppColors.quaternary,
                 size: 24,
               ),
             ),
