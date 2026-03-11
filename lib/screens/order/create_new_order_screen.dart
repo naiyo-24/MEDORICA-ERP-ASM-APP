@@ -134,15 +134,14 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   @override
   Widget build(BuildContext context) {
     final shops = ref.watch(chemistShopNotifierProvider);
-    final distributors = ref.watch(distributorNotifierProvider);
+    final distributors = ref.watch(distributorListProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Iconsax.arrow_circle_left,
-              color: AppColors.primary),
+          icon: const Icon(Iconsax.arrow_circle_left, color: AppColors.primary),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -187,7 +186,8 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                   selectedItem: _selectedDoctor,
                   label: 'Doctor',
                   hint: 'Select a doctor',
-                  itemLabel: (doctor) => '${doctor.name} (${doctor.specialization})',
+                  itemLabel: (doctor) =>
+                      '${doctor.name} (${doctor.specialization})',
                   onChanged: (doctor) {
                     setState(() => _selectedDoctor = doctor);
                   },
@@ -509,10 +509,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.primary,
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
@@ -567,10 +564,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.primaryLight,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.primaryLight, width: 1),
             color: AppColors.primaryLight.withAlpha(50),
           ),
           child: DropdownButton<T>(

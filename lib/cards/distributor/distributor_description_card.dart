@@ -9,6 +9,8 @@ class DistributorDescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final description = distributor.description?.trim();
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -38,7 +40,9 @@ class DistributorDescriptionCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              distributor.description,
+              description == null || description.isEmpty
+                  ? 'No distributor description available.'
+                  : description,
               style: AppTypography.body.copyWith(
                 color: AppColors.quaternary,
                 height: 1.6,
@@ -46,6 +50,42 @@ class DistributorDescriptionCard extends StatelessWidget {
               ),
               textAlign: TextAlign.justify,
             ),
+            if (distributor.products.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              Text(
+                'Products',
+                style: AppTypography.body.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: distributor.products
+                    .map(
+                      (product) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight.withAlpha(110),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          product,
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ],
           ],
         ),
       ),

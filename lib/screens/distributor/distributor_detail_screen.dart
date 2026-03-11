@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../cards/distributor/distributor_contact_card.dart';
 import '../../cards/distributor/distributor_description_card.dart';
 import '../../cards/distributor/distributor_order_info_card.dart';
 import '../../cards/distributor/dsitributor_header_card.dart';
-import '../../models/distributor.dart';
+import '../../providers/distributor_provider.dart';
 import '../../theme/app_theme.dart';
 
-class DistributorDetailScreen extends StatefulWidget {
-  final Distributor distributor;
+class DistributorDetailScreen extends ConsumerStatefulWidget {
+  final String distributorId;
 
-  const DistributorDetailScreen({
-    super.key,
-    required this.distributor,
-  });
+  const DistributorDetailScreen({super.key, required this.distributorId});
 
   @override
-  State<DistributorDetailScreen> createState() =>
+  ConsumerState<DistributorDetailScreen> createState() =>
       _DistributorDetailScreenState();
 }
 
-class _DistributorDetailScreenState extends State<DistributorDetailScreen> {
+class _DistributorDetailScreenState
+    extends ConsumerState<DistributorDetailScreen> {
   late ScrollController _scrollController;
   bool _showAppBar = false;
 
@@ -49,28 +48,42 @@ class _DistributorDetailScreenState extends State<DistributorDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final distributorAsync = ref.watch(
+      distributorByIdProvider(widget.distributorId),
+    );
+
     return Scaffold(
       appBar: _buildAnimatedAppBar(),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            // Header Card
-            DistributorHeaderCard(distributor: widget.distributor),
-            
-            // Order Info Card
-            DistributorOrderInfoCard(distributor: widget.distributor),
-            
-            // Description Card
-            DistributorDescriptionCard(distributor: widget.distributor),
-            
-            // Contact Card
-            DistributorContactCard(distributor: widget.distributor),
-            
-            // Bottom Padding
-            const SizedBox(height: 24),
-          ],
+      body: distributorAsync.when(
+        data: (distributor) {
+          if (distributor == null) {
+            return const Center(child: Text('Distributor not found'));
+          }
+
+          return SingleChildScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                DistributorHeaderCard(distributor: distributor),
+                DistributorOrderInfoCard(distributor: distributor),
+                DistributorDescriptionCard(distributor: distributor),
+                DistributorContactCard(distributor: distributor),
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              error.toString().replaceFirst('Exception: ', ''),
+              style: AppTypography.body.copyWith(color: AppColors.quaternary),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       ),
     );
@@ -104,14 +117,22 @@ class _DistributorDetailScreenState extends State<DistributorDetailScreen> {
         ),
       ),
       title: _showAppBar
-          ? Text(
-              widget.distributor.name,
-              style: AppTypography.h3.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          ? Consumer(
+              builder: (context, ref, child) {
+                final distributor = ref
+                    .watch(distributorByIdProvider(widget.distributorId))
+                    .asData
+                    ?.value;
+                return Text(
+                  distributor?.name ?? 'Distributor',
+                  style: AppTypography.h3.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
             )
           : null,
       centerTitle: false,

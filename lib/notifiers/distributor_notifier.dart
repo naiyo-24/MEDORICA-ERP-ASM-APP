@@ -1,88 +1,82 @@
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/distributor.dart';
+import '../services/distributor/distributor_services.dart';
 
-class DistributorNotifier extends StateNotifier<List<Distributor>> {
-  DistributorNotifier()
-    : super([
-        Distributor(
-          id: '1',
-          name: 'Metro Pharma Distributors',
-          location: 'New Delhi',
-          phoneNo: '+91 98765 43210',
-          email: 'contact@metropharma.com',
-          address: '123 Medical Lane, Delhi',
-          photoUrl: null,
-          minimumOrderValue: 50000,
-          deliveryTime: '24-48 hours',
-          description:
-              'Leading pharmaceutical distributor in North India with 15+ years of experience. Specializes in oncology and cardiology medications.',
-        ),
-        Distributor(
-          id: '2',
-          name: 'Apollo Healthcare Solutions',
-          location: 'Mumbai',
-          phoneNo: '+91 87654 32109',
-          email: 'sales@apollohealth.com',
-          address: '456 Pharmacy Road, Mumbai',
-          photoUrl: null,
-          minimumOrderValue: 75000,
-          deliveryTime: '24 hours',
-          description:
-              'Premium distributor with state-of-the-art warehousing facilities. Serves major hospitals and clinics across Western India.',
-        ),
-        Distributor(
-          id: '3',
-          name: 'Wellness Hub Distribution',
-          location: 'Bangalore',
-          phoneNo: '+91 76543 21098',
-          email: 'info@wellnesshub.com',
-          address: '789 Health Street, Bangalore',
-          photoUrl: null,
-          minimumOrderValue: 40000,
-          deliveryTime: '48 hours',
-          description:
-              'Trusted distributor in South India with focus on generic medications. Known for competitive pricing and reliable delivery.',
-        ),
-        Distributor(
-          id: '4',
-          name: 'HealthFirst Distributors',
-          location: 'Hyderabad',
-          phoneNo: '+91 65432 10987',
-          email: 'business@healthfirst.com',
-          address: '321 Medical Hub, Hyderabad',
-          photoUrl: null,
-          minimumOrderValue: 60000,
-          deliveryTime: '36 hours',
-          description:
-              'Emerging distributor with focus on affordable medications. Rapidly expanding network across South and Central India.',
-        ),
-        Distributor(
-          id: '5',
-          name: 'Care Logistics Pharma',
-          location: 'Pune',
-          phoneNo: '+91 54321 09876',
-          email: 'logistics@carecare.com',
-          address: '654 Pharma Lane, Pune',
-          photoUrl: null,
-          minimumOrderValue: 45000,
-          deliveryTime: '48 hours',
-          description:
-              'Specialized in fast-moving pharmaceuticals with efficient cold chain management for sensitive medications.',
-        ),
-      ]);
+class DistributorState {
+  final List<Distributor> distributors;
+  final bool isLoading;
+  final String? error;
 
-  void searchDistributors(String query) {
-    if (query.isEmpty) {
-      // Reset to all distributors
-      state = state;
-    } else {
-      state = state
-          .where(
-            (d) =>
-                d.name.toLowerCase().contains(query.toLowerCase()) ||
-                d.location.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+  const DistributorState({
+    this.distributors = const [],
+    this.isLoading = false,
+    this.error,
+  });
+
+  DistributorState copyWith({
+    List<Distributor>? distributors,
+    bool? isLoading,
+    String? error,
+  }) {
+    return DistributorState(
+      distributors: distributors ?? this.distributors,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+    );
+  }
+}
+
+class DistributorNotifier extends StateNotifier<DistributorState> {
+  DistributorNotifier(this._distributorServices)
+    : super(const DistributorState());
+
+  final DistributorServices _distributorServices;
+
+  Future<void> loadDistributors({bool forceRefresh = false}) async {
+    if (!forceRefresh && state.distributors.isNotEmpty) {
+      return;
     }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final distributors = await _distributorServices.fetchAllDistributors();
+      state = state.copyWith(
+        distributors: distributors,
+        isLoading: false,
+        error: null,
+      );
+    } catch (error) {
+      state = state.copyWith(isLoading: false, error: _readErrorMessage(error));
+    }
+  }
+
+  Future<Distributor?> fetchDistributorById(String id) async {
+    for (final distributor in state.distributors) {
+      if (distributor.id == id) {
+        return distributor;
+      }
+    }
+
+    try {
+      final distributor = await _distributorServices.fetchDistributorById(id);
+      state = state.copyWith(
+        distributors: [...state.distributors, distributor],
+        error: null,
+      );
+      return distributor;
+    } catch (error) {
+      state = state.copyWith(error: _readErrorMessage(error));
+      rethrow;
+    }
+  }
+
+  String _readErrorMessage(Object error) {
+    final message = error.toString();
+    if (message.startsWith('Exception: ')) {
+      return message.substring('Exception: '.length);
+    }
+    return message;
   }
 }

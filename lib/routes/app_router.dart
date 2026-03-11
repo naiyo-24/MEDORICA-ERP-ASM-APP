@@ -25,7 +25,6 @@ import '../screens/appointment/my_appointment_screen.dart';
 import '../screens/appointment/schedule_edit_appointment_screen.dart';
 import '../screens/visual_ads/visual_ads_screen.dart';
 import '../models/team_member.dart';
-import '../models/distributor.dart';
 import '../models/chemist_shop.dart' hide Doctor;
 import '../models/doctor.dart';
 import '../screens/month_plan/plan_screen.dart';
@@ -106,12 +105,8 @@ class AppRouter {
         GoRoute(
           path: AppRouter.distributorDetail,
           builder: (context, state) {
-            final distributor = state.extra as Distributor?;
-            return distributor != null
-                ? DistributorDetailScreen(distributor: distributor)
-                : const Scaffold(
-                    body: Center(child: Text('Distributor not found')),
-                  );
+            final distributorId = state.pathParameters['distributorId'] ?? '';
+            return DistributorDetailScreen(distributorId: distributorId);
           },
         ),
         GoRoute(

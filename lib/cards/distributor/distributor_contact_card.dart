@@ -12,14 +12,20 @@ class DistributorContactCard extends StatelessWidget {
   Future<void> _launchDialer(String phoneNo) async {
     final phoneUrl = 'tel:${phoneNo.replaceAll(RegExp(r'[^\d+]'), '')}';
     if (await canLaunchUrl(Uri.parse(phoneUrl))) {
-      await launchUrl(Uri.parse(phoneUrl), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(phoneUrl),
+        mode: LaunchMode.externalApplication,
+      );
     }
   }
 
   Future<void> _launchEmail(String email) async {
     final emailUrl = 'mailto:$email';
     if (await canLaunchUrl(Uri.parse(emailUrl))) {
-      await launchUrl(Uri.parse(emailUrl), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(emailUrl),
+        mode: LaunchMode.externalApplication,
+      );
     }
   }
 
@@ -33,6 +39,13 @@ class DistributorContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final location = distributor.location ?? distributor.address;
+    final hasBankDetails =
+        (distributor.bankName?.isNotEmpty ?? false) ||
+        (distributor.bankAccountNo?.isNotEmpty ?? false) ||
+        (distributor.branchName?.isNotEmpty ?? false) ||
+        (distributor.ifscCode?.isNotEmpty ?? false);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -84,14 +97,31 @@ class DistributorContactCard extends StatelessWidget {
             if (distributor.email != null && distributor.email!.isNotEmpty)
               const SizedBox(height: 10),
             // Address
-            if (distributor.address != null && distributor.address!.isNotEmpty)
+            if (location != null && location.isNotEmpty)
               GestureDetector(
-                onTap: () => _launchMaps(distributor.address!),
+                onTap: () => _launchMaps(location),
                 child: _ContactItem(
                   icon: Iconsax.location,
-                  label: 'Address',
-                  value: distributor.address!,
+                  label: 'Location',
+                  value: location,
                 ),
+              ),
+            if (location != null && location.isNotEmpty && hasBankDetails)
+              const SizedBox(height: 10),
+            if (hasBankDetails)
+              _ContactItem(
+                icon: Iconsax.bank,
+                label: 'Bank Details',
+                value:
+                    [
+                          distributor.bankName,
+                          distributor.bankAccountNo,
+                          distributor.branchName,
+                          distributor.ifscCode,
+                        ]
+                        .whereType<String>()
+                        .where((item) => item.isNotEmpty)
+                        .join(' • '),
               ),
           ],
         ),
@@ -131,11 +161,7 @@ class _ContactItem extends StatelessWidget {
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.primary,
-              size: 18,
-            ),
+            child: Icon(icon, color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -164,11 +190,7 @@ class _ContactItem extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
-            Iconsax.arrow_right,
-            color: AppColors.quaternary,
-            size: 18,
-          ),
+          Icon(Iconsax.arrow_right, color: AppColors.quaternary, size: 18),
         ],
       ),
     );

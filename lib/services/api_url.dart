@@ -24,6 +24,11 @@ class ApiUrl {
   // About Us Endpoints
   static const String aboutUsGetAll = '/about-us/get-all';
 
+  // Distributor Endpoints
+  static const String distributorGetAll = '/distributor/get-all';
+  static String distributorGetById(String distId) =>
+      '/distributor/get-by/$distId';
+
   // ASM Attendance Endpoints
   static const String asmAttendancePost = '/attendance/asm/post';
   static String asmAttendanceGetByAsmId(String asmId) =>

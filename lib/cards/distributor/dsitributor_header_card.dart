@@ -32,10 +32,7 @@ class DistributorHeaderCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary.withAlpha(180),
-                ],
+                colors: [AppColors.primary, AppColors.primary.withAlpha(180)],
               ),
             ),
             child: distributor.photoUrl != null
@@ -44,6 +41,11 @@ class DistributorHeaderCard extends StatelessWidget {
                     child: Image.network(
                       distributor.photoUrl!,
                       fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox.shrink();
+                      },
                     ),
                   )
                 : null,
@@ -89,22 +91,55 @@ class DistributorHeaderCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withAlpha(30),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            distributor.id,
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
                         Icon(
                           Iconsax.location,
                           color: AppColors.white,
                           size: 18,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          distributor.location,
-                          style: AppTypography.body.copyWith(
-                            color: AppColors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            distributor.location ?? 'Location not available',
+                            style: AppTypography.body.copyWith(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
+                    if (distributor.paymentTerms != null &&
+                        distributor.paymentTerms!.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        'Payment: ${distributor.paymentTerms}',
+                        style: AppTypography.body.copyWith(
+                          color: AppColors.white.withAlpha(220),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],

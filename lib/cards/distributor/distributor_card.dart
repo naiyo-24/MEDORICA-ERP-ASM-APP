@@ -16,6 +16,12 @@ class DistributorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final photoPath = distributor.photoUrl?.trim();
+    final hasPhoto = photoPath != null && photoPath.isNotEmpty;
+    final isNetworkPhoto =
+        hasPhoto &&
+        (photoPath.startsWith('http://') || photoPath.startsWith('https://'));
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -46,9 +52,7 @@ class DistributorCard extends StatelessWidget {
                 ),
                 color: AppColors.primaryLight,
               ),
-              child:
-                  distributor.photoUrl != null &&
-                      distributor.photoUrl!.isNotEmpty
+              child: hasPhoto
                   ? Stack(
                       children: [
                         ClipRRect(
@@ -56,14 +60,45 @@ class DistributorCard extends StatelessWidget {
                             topLeft: Radius.circular(16),
                             topRight: Radius.circular(16),
                           ),
-                          child: Image.file(
-                            File(distributor.photoUrl!),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildDefaultPhotoContainer();
-                            },
+                          child: isNetworkPhoto
+                              ? Image.network(
+                                  photoPath,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return _buildDefaultPhotoContainer();
+                                  },
+                                )
+                              : Image.file(
+                                  File(photoPath),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return _buildDefaultPhotoContainer();
+                                  },
+                                ),
+                        ),
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(140),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              distributor.id,
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -98,7 +133,7 @@ class DistributorCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          distributor.location,
+                          distributor.location ?? 'Location not available',
                           style: AppTypography.body.copyWith(
                             color: AppColors.quaternary,
                             fontSize: 13,
@@ -124,6 +159,33 @@ class DistributorCard extends StatelessWidget {
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          distributor.paymentTerms ??
+                              'Payment terms not specified',
+                          style: AppTypography.caption.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        distributor.minimumOrderValue == null
+                            ? 'MOQ NA'
+                            : 'MOQ ₹${distributor.minimumOrderValue!.toStringAsFixed(0)}',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.quaternary,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],

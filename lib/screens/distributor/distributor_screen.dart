@@ -2,14 +2,14 @@ import 'package:asm_app/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
+
 import '../../cards/distributor/distributor_card.dart';
 import '../../cards/distributor/distributor_search_filter_card.dart';
-import '../../models/distributor.dart';
 import '../../providers/distributor_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
-import 'package:iconsax/iconsax.dart';
 
 class DistributorScreen extends ConsumerStatefulWidget {
   const DistributorScreen({super.key});
@@ -20,32 +20,23 @@ class DistributorScreen extends ConsumerStatefulWidget {
 
 class _DistributorScreenState extends ConsumerState<DistributorScreen> {
   String _searchQuery = '';
-  List<Distributor> _filteredDistributors = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _updateFilteredList();
-  }
-
-  void _updateFilteredList() {
-    final allDistributors = ref.read(distributorNotifierProvider);
-    if (_searchQuery.isEmpty) {
-      _filteredDistributors = allDistributors;
-    } else {
-      _filteredDistributors = allDistributors
-          .where(
-            (d) =>
-                d.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                d.location.toLowerCase().contains(_searchQuery.toLowerCase()),
-          )
-          .toList();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final _ = ref.watch(distributorNotifierProvider);
+    final distributors = ref.watch(distributorListProvider);
+    final isLoading = ref.watch(distributorLoadingProvider);
+    final error = ref.watch(distributorErrorProvider);
+    final filteredDistributors = _searchQuery.isEmpty
+        ? distributors
+        : distributors
+              .where(
+                (d) =>
+                    d.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    (d.location ?? '').toLowerCase().contains(
+                      _searchQuery.toLowerCase(),
+                    ),
+              )
+              .toList();
 
     return PopScope(
       canPop: false,
@@ -68,7 +59,6 @@ class _DistributorScreenState extends ConsumerState<DistributorScreen> {
               onSearch: (query) {
                 setState(() {
                   _searchQuery = query;
-                  _updateFilteredList();
                 });
               },
               onFilterChange: (filter) {
@@ -77,7 +67,18 @@ class _DistributorScreenState extends ConsumerState<DistributorScreen> {
             ),
             // Distributor List
             Expanded(
-              child: _filteredDistributors.isEmpty
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : error != null && distributors.isEmpty
+                  ? _DistributorErrorState(
+                      message: error,
+                      onRetry: () {
+                        ref
+                            .read(distributorNotifierProvider.notifier)
+                            .loadDistributors(forceRefresh: true);
+                      },
+                    )
+                  : filteredDistributors.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,15 +107,14 @@ class _DistributorScreenState extends ConsumerState<DistributorScreen> {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: _filteredDistributors.length,
+                      itemCount: filteredDistributors.length,
                       itemBuilder: (context, index) {
-                        final distributor = _filteredDistributors[index];
+                        final distributor = filteredDistributors[index];
                         return DistributorCard(
                           distributor: distributor,
                           onTap: () {
                             context.push(
                               '/distributor-detail/${distributor.id}',
-                              extra: distributor,
                             );
                           },
                         );
@@ -124,6 +124,36 @@ class _DistributorScreenState extends ConsumerState<DistributorScreen> {
           ],
         ),
         bottomNavigationBar: const MRBottomNavBar(currentIndex: 4),
+      ),
+    );
+  }
+}
+
+class _DistributorErrorState extends StatelessWidget {
+  const _DistributorErrorState({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Iconsax.warning_2, size: 48, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: AppTypography.body.copyWith(color: AppColors.quaternary),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ),
       ),
     );
   }
