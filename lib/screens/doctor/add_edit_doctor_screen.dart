@@ -24,6 +24,7 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
   late TextEditingController _nameController;
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
+  late TextEditingController _addressController;
   late TextEditingController _photoController;
   late TextEditingController _specializationController;
   late TextEditingController _experienceController;
@@ -38,6 +39,7 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
   bool _loading = false;
   XFile? _selectedPhoto;
   final ImagePicker _imagePicker = ImagePicker();
+  DateTime? _selectedBirthday;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
     _nameController = TextEditingController(text: doctor?.name ?? '');
     _phoneController = TextEditingController(text: doctor?.phoneNumber ?? '');
     _emailController = TextEditingController(text: doctor?.email ?? '');
+    _addressController = TextEditingController(text: doctor?.address ?? '');
     _photoController = TextEditingController(text: doctor?.photo ?? '');
     _specializationController = TextEditingController(
       text: doctor?.specialization ?? '',
@@ -63,6 +66,22 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
     _chamberAddressController = TextEditingController();
     _chamberPhoneController = TextEditingController();
     _chambers = doctor?.chambers ?? [];
+    _selectedBirthday = doctor?.birthday;
+  }
+
+  Future<void> _pickBirthday() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate:
+          _selectedBirthday ?? DateTime(now.year - 30, now.month, now.day),
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
+
+    if (picked != null) {
+      setState(() => _selectedBirthday = picked);
+    }
   }
 
   Future<void> _pickPhotoFromGallery() async {
@@ -90,6 +109,7 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _addressController.dispose();
     _photoController.dispose();
     _specializationController.dispose();
     _experienceController.dispose();
@@ -160,8 +180,8 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
       experience: _experienceController.text.trim(),
       qualification: _qualificationController.text.trim(),
       description: _descriptionController.text.trim(),
-      address: widget.doctor?.address ?? '',
-      birthday: widget.doctor?.birthday,
+      address: _addressController.text.trim(),
+      birthday: _selectedBirthday,
       chambers: _chambers,
     );
 
@@ -280,6 +300,19 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) =>
                     (v == null || v.isEmpty) ? 'Enter email' : null,
+              ),
+              const SizedBox(height: AppSpacing.md),
+
+              // Birthday
+              _buildBirthdayPickerField(),
+              const SizedBox(height: AppSpacing.md),
+
+              // Address
+              _buildTextFormField(
+                controller: _addressController,
+                label: 'Address',
+                icon: Iconsax.location,
+                maxLines: 2,
               ),
               const SizedBox(height: AppSpacing.md),
 
@@ -675,6 +708,44 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBirthdayPickerField() {
+    final text = _selectedBirthday == null
+        ? 'Select birthday'
+        : '${_selectedBirthday!.day.toString().padLeft(2, '0')}/${_selectedBirthday!.month.toString().padLeft(2, '0')}/${_selectedBirthday!.year}';
+
+    return InkWell(
+      onTap: _pickBirthday,
+      borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Birthday',
+          labelStyle: AppTypography.body.copyWith(color: AppColors.quaternary),
+          prefixIcon: const Icon(Iconsax.calendar, color: AppColors.primary),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.lg),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
+        ),
+        child: Text(
+          text,
+          style: AppTypography.bodyLarge.copyWith(
+            color: _selectedBirthday == null
+                ? AppColors.quaternary
+                : AppColors.black,
+          ),
+        ),
+      ),
     );
   }
 }

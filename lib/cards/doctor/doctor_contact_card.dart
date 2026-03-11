@@ -6,11 +6,15 @@ import '../../../theme/app_theme.dart';
 class DoctorContactCard extends StatelessWidget {
   final String phoneNumber;
   final String email;
+  final String? address;
+  final DateTime? birthday;
 
   const DoctorContactCard({
     super.key,
     required this.phoneNumber,
     required this.email,
+    this.address,
+    this.birthday,
   });
 
   Future<void> _launchPhone(String phoneNumber) async {
@@ -68,6 +72,23 @@ class DoctorContactCard extends StatelessWidget {
             value: email,
             onTap: () => _launchEmail(email),
           ),
+          if (address != null && address!.trim().isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            _buildContactItem(
+              icon: Iconsax.location,
+              label: 'Address',
+              value: address!,
+            ),
+          ],
+          if (birthday != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            _buildContactItem(
+              icon: Iconsax.calendar,
+              label: 'Birthday',
+              value:
+                  '${birthday!.day.toString().padLeft(2, '0')}/${birthday!.month.toString().padLeft(2, '0')}/${birthday!.year}',
+            ),
+          ],
         ],
       ),
     );
@@ -83,44 +104,40 @@ class DoctorContactCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppBorderRadius.md),
       child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppColors.primaryLight,
-            borderRadius: BorderRadius.circular(AppBorderRadius.md),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: BorderRadius.circular(AppBorderRadius.md),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 18),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-            size: 18,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.quaternary,
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.quaternary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                value,
-                style: AppTypography.bodyLarge.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  value,
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
       ),
     );
   }
