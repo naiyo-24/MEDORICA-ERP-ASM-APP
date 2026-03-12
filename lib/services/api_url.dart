@@ -19,6 +19,20 @@ class ApiUrl {
   // Notification Endpoints
   static const String notificationsGetAllAsm = '/notifications/get-all/asm';
 
+  // Monthly Plan Endpoints
+  static const String monthlyPlanPost = '/monthly-plan/post';
+  static const String monthlyPlanGetAll = '/monthly-plan/get-all';
+  static String monthlyPlanGetById(int planId) =>
+      '/monthly-plan/get-by/$planId';
+  static String monthlyPlanGetByMrId(String mrId) =>
+      '/monthly-plan/get-by-mr/$mrId';
+  static String monthlyPlanGetByMrIdAndDate(String mrId, DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '/monthly-plan/get-by-mr/$mrId/date/$y-$m-$d';
+  }
+
   // Helper method to get full URL
   static String getFullUrl(String endpoint) {
     final trimmed = endpoint.trim();
