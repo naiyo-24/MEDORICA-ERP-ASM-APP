@@ -37,6 +37,16 @@ class ApiUrl {
     return '/monthly-plan/get-by-mr/$mrId/date/$y-$m-$d';
   }
 
+  // ASM Monthly Target Endpoints (GET)
+  static const String monthlyTargetAsmGetAll = '/monthly-target/asm/get-all';
+  static String monthlyTargetAsmGetByAsmId(String asmId) =>
+      '/monthly-target/asm/get-by-asm/$asmId';
+  static String monthlyTargetAsmGetByAsmYearMonth(
+    String asmId,
+    int year,
+    int month,
+  ) => '/monthly-target/asm/get-by/$asmId/$year/$month';
+
   // Helper method to get full URL
   static String getFullUrl(String endpoint) {
     final trimmed = endpoint.trim();

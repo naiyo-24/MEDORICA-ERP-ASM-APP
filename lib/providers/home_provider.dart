@@ -14,6 +14,14 @@ final homeSelectedMonthProvider = Provider<DateTime>((ref) {
   return homeState.selectedMonth;
 });
 
+final homeMonthlyTargetLoadingProvider = Provider<bool>((ref) {
+  return ref.watch(homeNotifierProvider).isLoading;
+});
+
+final homeMonthlyTargetErrorProvider = Provider<String?>((ref) {
+  return ref.watch(homeNotifierProvider).error;
+});
+
 final homeTodaysAttendanceProvider = FutureProvider<Attendance?>((ref) async {
   final asmId = ref.watch(authNotifierProvider).asmId;
   if (asmId == null || asmId.isEmpty) {
