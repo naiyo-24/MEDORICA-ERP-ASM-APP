@@ -119,7 +119,7 @@ class GroupLinkBottomSheet extends StatelessWidget {
                         child: Text(
                           'Join the WhatsApp group to stay connected with your team members.',
                           style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.quaternary,
+                            color: AppColors.primary,
                             height: 1.4,
                           ),
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../theme/app_theme.dart';
 import '../../models/team_member.dart';
 import '../../widgets/app_bar.dart';
 import '../../cards/team_member/team_member_header_card.dart';
@@ -14,6 +15,7 @@ class TeamMemberDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surface,
       appBar: MRAppBar(
         showBack: true,
         showActions: false,
@@ -26,13 +28,22 @@ class TeamMemberDetailScreen extends StatelessWidget {
           children: [
             // Header Card with member photo
             TeamMemberHeaderCard(member: member),
-
-            // Contact Information Card
-            TeamMemberContactCard(member: member),
-
-            // Work Area Card
-            TeamMemberWorkAreaCard(member: member),
-            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenPaddingHorizontal,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.md),
+                  // Contact Information Card
+                  TeamMemberContactCard(member: member),
+                  const SizedBox(height: AppSpacing.md),
+                  // Work Area Card
+                  TeamMemberWorkAreaCard(member: member),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            ),
           ],
         ),
       ),

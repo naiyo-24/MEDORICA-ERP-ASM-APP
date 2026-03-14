@@ -11,7 +11,6 @@ class TeamMemberContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
@@ -81,16 +80,12 @@ class _ContactItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withAlpha(80),
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: AppColors.primary,
-            size: 20,
-          ),
+          Icon(icon, color: AppColors.white, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -99,7 +94,7 @@ class _ContactItem extends StatelessWidget {
                 Text(
                   label,
                   style: AppTypography.caption.copyWith(
-                    color: AppColors.quaternary,
+                    color: AppColors.white,
                     fontSize: 11,
                   ),
                 ),
@@ -107,7 +102,7 @@ class _ContactItem extends StatelessWidget {
                 Text(
                   value,
                   style: AppTypography.body.copyWith(
-                    color: AppColors.primary,
+                    color: AppColors.white,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
