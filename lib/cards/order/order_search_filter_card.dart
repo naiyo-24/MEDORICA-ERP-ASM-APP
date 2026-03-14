@@ -36,16 +36,15 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withAlpha(12),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(color: AppColors.primaryLight, width: 1),
@@ -60,27 +59,31 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
                 hintText: 'Search orders...',
                 hintStyle: AppTypography.body.copyWith(
                   color: AppColors.quaternary,
+                  fontSize: 12,
                 ),
                 border: InputBorder.none,
                 prefixIcon: const Icon(
                   Iconsax.search_normal,
                   color: AppColors.quaternary,
-                  size: 20,
+                  size: 18,
                 ),
                 prefixIconConstraints: const BoxConstraints(
-                  minWidth: 40,
-                  minHeight: 40,
+                  minWidth: 34,
+                  minHeight: 34,
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(vertical: 6),
               ),
-              style: AppTypography.body.copyWith(color: AppColors.primary),
+              style: AppTypography.body.copyWith(
+                color: AppColors.primary,
+                fontSize: 13,
+              ),
             ),
           ),
           Container(
             width: 1,
-            height: 24,
+            height: 20,
             color: AppColors.primaryLight,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 6),
           ),
           PopupMenuButton<OrderStatus?>(
             onSelected: (value) {
@@ -107,13 +110,13 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
               ),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Icon(
                 Iconsax.setting_3,
                 color: _selectedStatus != null
                     ? AppColors.primary
                     : AppColors.quaternary,
-                size: 24,
+                size: 20,
               ),
             ),
           ),

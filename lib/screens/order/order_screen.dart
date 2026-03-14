@@ -37,72 +37,85 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.surface,
         appBar: const MRAppBar(
           titleText: 'My Orders',
           subtitleText: 'Track your orders',
           showActions: false,
         ),
-        body: Column(
-          children: [
-            // Search and Filter Section
-            OrderSearchFilterCard(
-              onSearchChanged: (query) {
-                setState(() => _searchQuery = query);
-              },
-              onStatusFilterChanged: (status) {
-                setState(() => _selectedStatus = status);
-              },
-            ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingHorizontal,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: AppSpacing.md),
+              // Search and Filter Section
+              OrderSearchFilterCard(
+                onSearchChanged: (query) {
+                  setState(() => _searchQuery = query);
+                },
+                onStatusFilterChanged: (status) {
+                  setState(() => _selectedStatus = status);
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
 
-            // Orders List
-            Expanded(
-              child: orderState.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : filteredOrders.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Iconsax.note_remove,
-                            size: 64,
-                            color: AppColors.quaternary.withAlpha(150),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No orders found',
-                            style: AppTypography.h3.copyWith(
-                              color: AppColors.quaternary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            orderState.error ??
-                                (_searchQuery.isNotEmpty
-                                    ? 'Try adjusting your search'
-                                    : 'No orders available'),
-                            style: AppTypography.body.copyWith(
+              // Orders List
+              Expanded(
+                child: orderState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredOrders.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.note_remove,
+                              size: 64,
                               color: AppColors.quaternary.withAlpha(150),
-                              fontSize: 12,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            Text(
+                              'No orders found',
+                              style: AppTypography.h3.copyWith(
+                                color: AppColors.quaternary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              orderState.error ??
+                                  (_searchQuery.isNotEmpty
+                                      ? 'Try adjusting your search'
+                                      : 'No orders available'),
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.quaternary.withAlpha(150),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        itemCount: filteredOrders.length,
+                        itemBuilder: (context, index) {
+                          final order = filteredOrders[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.md,
+                            ),
+                            child: OrderCard(
+                              order: order,
+                              onTap: () => _showOrderDetails(order),
+                            ),
+                          );
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      itemCount: filteredOrders.length,
-                      itemBuilder: (context, index) {
-                        final order = filteredOrders[index];
-                        return OrderCard(
-                          order: order,
-                          onTap: () => _showOrderDetails(order),
-                        );
-                      },
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
