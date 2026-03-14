@@ -1,7 +1,15 @@
 class ApiUrl {
-  // Base URL - Use 10.0.2.2 for Android Emulator (maps to host machine's localhost)
-  // Use 127.0.0.1, 192.168.1.44 or localhost for iOS Simulator
-  static const String baseUrl = 'http://10.0.2.2:8000';
+  // Default base URL for physical devices on the same LAN as the backend.
+  static const String _defaultBaseUrl = 'http://192.168.1.44:8000';
+
+  // Override at runtime if needed:
+  // flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
+  // flutter run --dart-define=API_BASE_URL=http://<your-laptop-lan-ip>:8000
+  static String get baseUrl {
+    const fromEnv = String.fromEnvironment('API_BASE_URL', defaultValue: '');
+    final normalized = fromEnv.trim();
+    return normalized.isEmpty ? _defaultBaseUrl : normalized;
+  }
 
   // ASM Auth
   static const String asmLogin = '/onboarding/asm/login';
