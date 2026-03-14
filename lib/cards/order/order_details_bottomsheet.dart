@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/order.dart';
-import '../../providers/order_provider.dart';
+import '../../routes/app_router.dart';
 import '../../theme/app_theme.dart';
 
 class OrderDetailsBottomSheet extends ConsumerStatefulWidget {
   final Order order;
 
-  const OrderDetailsBottomSheet({
-    super.key,
-    required this.order,
-  });
+  const OrderDetailsBottomSheet({super.key, required this.order});
 
   @override
   ConsumerState<OrderDetailsBottomSheet> createState() =>
@@ -21,18 +19,13 @@ class OrderDetailsBottomSheet extends ConsumerStatefulWidget {
 
 class _OrderDetailsBottomSheetState
     extends ConsumerState<OrderDetailsBottomSheet> {
-  late OrderStatus _selectedStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedStatus = widget.order.status;
-  }
-
   Future<void> _launchDialer(String phoneNo) async {
     final phoneUrl = 'tel:${phoneNo.replaceAll(RegExp(r'[^\d+]'), '')}';
     if (await canLaunchUrl(Uri.parse(phoneUrl))) {
-      await launchUrl(Uri.parse(phoneUrl), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(phoneUrl),
+        mode: LaunchMode.externalApplication,
+      );
     }
   }
 
@@ -253,36 +246,63 @@ class _OrderDetailsBottomSheetState
                   _buildSectionTitle('Order Status'),
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primaryLight),
-                      borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
                     ),
-                    child: DropdownButton<OrderStatus>(
-                      value: _selectedStatus,
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                      onChanged: (OrderStatus? newStatus) {
-                        if (newStatus != null) {
-                          setState(() => _selectedStatus = newStatus);
-                          ref
-                              .read(orderNotifierProvider.notifier)
-                              .updateOrderStatus(widget.order.id, newStatus);
-                          Navigator.pop(context);
-                        }
-                      },
-                      items: OrderStatus.values.map((status) {
-                        return DropdownMenuItem(
-                          value: status,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryLight.withAlpha(100),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.primaryLight.withAlpha(150),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Iconsax.status, color: AppColors.primary),
+                        const SizedBox(width: 10),
+                        Expanded(
                           child: Text(
-                            status.toString().split('.').last.toUpperCase(),
+                            widget.order.status
+                                .toString()
+                                .split('.')
+                                .last
+                                .toUpperCase(),
                             style: AppTypography.body.copyWith(
                               color: AppColors.primary,
                               fontSize: 13,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        context.push(AppRouter.editOrder, extra: widget.order);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        elevation: 2,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      icon: const Icon(Iconsax.edit_2, color: AppColors.white),
+                      label: Text(
+                        'Edit Order',
+                        style: AppTypography.body.copyWith(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -306,10 +326,7 @@ class _OrderDetailsBottomSheetState
     );
   }
 
-  Widget _buildSection({
-    required String title,
-    required Widget child,
-  }) {
+  Widget _buildSection({required String title, required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -351,11 +368,7 @@ class _OrderDetailsBottomSheetState
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.primary,
-              size: 18,
-            ),
+            child: Icon(icon, color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -385,11 +398,7 @@ class _OrderDetailsBottomSheetState
             ),
           ),
           if (isClickable)
-            Icon(
-              Iconsax.arrow_right,
-              color: AppColors.quaternary,
-              size: 18,
-            ),
+            Icon(Iconsax.arrow_right, color: AppColors.quaternary, size: 18),
         ],
       ),
     );

@@ -1,8 +1,7 @@
 class ApiUrl {
   // Base URL - Use 10.0.2.2 for Android Emulator (maps to host machine's localhost)
   // Use 127.0.0.1, 192.168.1.44 or localhost for iOS Simulator
-  static const String baseUrl = 'http://0.0.0.0:8000';
-
+  static const String baseUrl = 'http://10.0.2.2:8000';
 
   // ASM Auth
   static const String asmLogin = '/onboarding/asm/login';
@@ -113,4 +112,17 @@ class ApiUrl {
       '/appointment/asm/update-by/$appointmentId';
   static String appointmentDeleteById(String appointmentId) =>
       '/appointment/asm/delete-by/$appointmentId';
+
+  // ASM Order Endpoints
+  static String orderAsmPostByAsmId(String asmId) =>
+      '/order/asm/post-by/$asmId';
+  static const String orderAsmGetAll = '/order/asm/get-all';
+  static String orderAsmGetByAsmId(String asmId) =>
+      '/order/asm/get-by-asm/$asmId';
+  static String orderAsmGetByAsmAndOrderId(String asmId, String orderId) =>
+      '/order/asm/get-by/$asmId/$orderId';
+  static String orderAsmUpdateByOrderId(String orderId) =>
+      '/order/asm/update-by/$orderId';
+  static String orderAsmDeleteByOrderId(String orderId) =>
+      '/order/asm/delete-by/$orderId';
 }

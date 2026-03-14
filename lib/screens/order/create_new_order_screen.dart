@@ -4,10 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../models/order.dart';
 import '../../models/chemist_shop.dart';
+import '../../models/doctor.dart' as doctor_model;
 import '../../models/distributor.dart';
 import '../../providers/order_provider.dart';
 import '../../providers/chemist_shop_provider.dart';
 import '../../providers/distributor_provider.dart';
+import '../../providers/doctor_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 
 class CreateNewOrderScreen extends ConsumerStatefulWidget {
@@ -26,9 +29,8 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   late TextEditingController _medicineTotalAmountController;
 
   ChemistShop? _selectedShop;
-  Doctor? _selectedDoctor;
+  doctor_model.Doctor? _selectedDoctor;
   Distributor? _selectedDistributor;
-  OrderStatus _selectedStatus = OrderStatus.pending;
   final List<Medicine> _medicines = [];
 
   @override
@@ -91,7 +93,7 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
     setState(() => _medicines.removeAt(index));
   }
 
-  void _saveOrder() {
+  Future<void> _saveOrder() async {
     if (_medicines.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -102,24 +104,63 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
       return;
     }
 
-    final order = Order(
-      id: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
-      chemistShopName: _selectedShop?.name ?? '',
-      chemistShopPhoneNo: _selectedShop?.phoneNo ?? '',
-      chemistShopAddress: _selectedShop?.address ?? '',
-      chemistShopId: _selectedShop?.id ?? '',
-      doctorName: _selectedDoctor?.name ?? '',
-      distributorName: _selectedDistributor?.name ?? '',
-      distributorPhoneNo: _selectedDistributor?.phoneNo ?? '',
-      distributorAddress: _selectedDistributor?.address ?? '',
-      distributorDeliveryTime: _selectedDistributor?.deliveryTime ?? '',
-      distributorId: _selectedDistributor?.id ?? '',
-      medicines: _medicines,
-      status: _selectedStatus,
-      createdAt: DateTime.now(),
+    if (_selectedShop == null ||
+        _selectedDoctor == null ||
+        _selectedDistributor == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select chemist shop, doctor and distributor'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final asmId = ref.read(authNotifierProvider).asmId;
+    if (asmId == null || asmId.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to identify ASM. Please login again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final totalAmount = _medicines.fold<double>(
+      0,
+      (sum, medicine) => sum + medicine.totalAmount,
     );
 
-    ref.read(orderNotifierProvider.notifier).addOrder(order);
+    try {
+      await ref
+          .read(orderNotifierProvider.notifier)
+          .createOrder(
+            asmId: asmId,
+            distributorId: _selectedDistributor!.id,
+            chemistShopId: _selectedShop!.id,
+            doctorId: _selectedDoctor!.id,
+            medicines: _medicines,
+            totalAmountRupees: totalAmount,
+            distributorName: _selectedDistributor!.name,
+            distributorPhoneNo: _selectedDistributor!.phoneNo,
+            distributorAddress: _selectedDistributor!.address ?? '',
+            distributorDeliveryTime: _selectedDistributor!.deliveryTime ?? '',
+            chemistShopName: _selectedShop!.name,
+            chemistShopPhoneNo: _selectedShop!.phoneNo,
+            chemistShopAddress: _selectedShop!.address ?? '',
+            doctorName: _selectedDoctor!.name,
+          );
+    } catch (_) {
+      final error = ref.read(orderNotifierProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error ?? 'Failed to create order'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -134,7 +175,9 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
   @override
   Widget build(BuildContext context) {
     final shops = ref.watch(chemistShopNotifierProvider).shops;
+    final doctors = ref.watch(doctorProvider);
     final distributors = ref.watch(distributorListProvider);
+    final isSaving = ref.watch(orderLoadingProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -181,8 +224,8 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
               _buildSectionTitle('Select Doctor'),
               const SizedBox(height: 16),
               if (_selectedShop != null)
-                _buildDropdown<Doctor>(
-                  items: _selectedShop!.doctors,
+                _buildDropdown<doctor_model.Doctor>(
+                  items: doctors,
                   selectedItem: _selectedDoctor,
                   label: 'Doctor',
                   hint: 'Select a doctor',
@@ -385,29 +428,13 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                 const SizedBox(height: 24),
               ],
 
-              // Section 5: Order Status
-              _buildSectionTitle('Order Status'),
-              const SizedBox(height: 16),
-              _buildDropdown<OrderStatus>(
-                items: OrderStatus.values,
-                selectedItem: _selectedStatus,
-                label: 'Status',
-                hint: 'Select status',
-                itemLabel: (status) =>
-                    status.toString().split('.').last.toUpperCase(),
-                onChanged: (status) {
-                  setState(() => _selectedStatus = status);
-                },
-                icon: Iconsax.status,
-                isRequired: false,
-              ),
               const SizedBox(height: 32),
 
               // Save Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _saveOrder,
+                  onPressed: isSaving ? null : _saveOrder,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     elevation: 4,
@@ -417,9 +444,18 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  icon: const Icon(Iconsax.add_circle, color: AppColors.white),
+                  icon: isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.white,
+                          ),
+                        )
+                      : const Icon(Iconsax.add_circle, color: AppColors.white),
                   label: Text(
-                    'Create Order',
+                    isSaving ? 'Creating...' : 'Create Order',
                     style: AppTypography.h3.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.w700,

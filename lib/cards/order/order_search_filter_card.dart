@@ -14,8 +14,7 @@ class OrderSearchFilterCard extends StatefulWidget {
   });
 
   @override
-  State<OrderSearchFilterCard> createState() =>
-      _OrderSearchFilterCardState();
+  State<OrderSearchFilterCard> createState() => _OrderSearchFilterCardState();
 }
 
 class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
@@ -89,10 +88,7 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
               widget.onStatusFilterChanged(value);
             },
             itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(
-                value: null,
-                child: Text('All Orders'),
-              ),
+              const PopupMenuItem(value: null, child: Text('All Orders')),
               const PopupMenuItem(
                 value: OrderStatus.pending,
                 child: Text('Pending'),
@@ -106,15 +102,17 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
                 child: Text('Delivered'),
               ),
               const PopupMenuItem(
-                value: OrderStatus.rejected,
-                child: Text('Rejected'),
+                value: OrderStatus.shipped,
+                child: Text('Shipped'),
               ),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Icon(
                 Iconsax.setting_3,
-                color: _selectedStatus != null ? AppColors.primary : AppColors.quaternary,
+                color: _selectedStatus != null
+                    ? AppColors.primary
+                    : AppColors.quaternary,
                 size: 24,
               ),
             ),
@@ -124,4 +122,3 @@ class _OrderSearchFilterCardState extends State<OrderSearchFilterCard> {
     );
   }
 }
-

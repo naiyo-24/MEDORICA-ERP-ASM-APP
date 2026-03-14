@@ -7,11 +7,7 @@ class OrderCard extends StatelessWidget {
   final Order order;
   final VoidCallback onTap;
 
-  const OrderCard({
-    super.key,
-    required this.order,
-    required this.onTap,
-  });
+  const OrderCard({super.key, required this.order, required this.onTap});
 
   Color _getStatusColor() {
     switch (order.status) {
@@ -21,6 +17,8 @@ class OrderCard extends StatelessWidget {
         return const Color(0xFFFFC107);
       case OrderStatus.delivered:
         return const Color(0xFF2196F3);
+      case OrderStatus.shipped:
+        return const Color(0xFF3F51B5);
       case OrderStatus.received:
         return const Color(0xFF8BC34A);
       case OrderStatus.rejected:
@@ -92,11 +90,7 @@ class OrderCard extends StatelessWidget {
             // Shop Name
             Row(
               children: [
-                Icon(
-                  Iconsax.shop,
-                  color: AppColors.quaternary,
-                  size: 16,
-                ),
+                Icon(Iconsax.shop, color: AppColors.quaternary, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -115,11 +109,7 @@ class OrderCard extends StatelessWidget {
             // Distributor Name
             Row(
               children: [
-                Icon(
-                  Iconsax.truck,
-                  color: AppColors.quaternary,
-                  size: 16,
-                ),
+                Icon(Iconsax.truck, color: AppColors.quaternary, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

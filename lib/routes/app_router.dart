@@ -17,6 +17,8 @@ import '../screens/chemist_shop/chemist_shop_detail_screen.dart';
 import '../screens/chemist_shop/add_edit_chemist_shop_screen.dart';
 import '../screens/order/order_screen.dart';
 import '../screens/order/create_new_order_screen.dart';
+import '../screens/order/edit_order_screen.dart';
+import '../models/order.dart';
 import '../screens/about_us/about_us_screen.dart';
 import '../screens/doctor/doctor_screen.dart';
 import '../screens/doctor/doctor_detail_screen.dart';
@@ -46,6 +48,7 @@ class AppRouter {
   static const String addEditChemistShop = '/add-edit-chemist-shop';
   static const String orders = '/mr-orders';
   static const String createOrder = '/create-order';
+  static const String editOrder = '/edit-order';
   static const String notifications = '/notifications';
   static const String profile = '/profile';
   static const String updateProfile = '/profile/update';
@@ -143,6 +146,15 @@ class AppRouter {
         GoRoute(
           path: AppRouter.createOrder,
           builder: (context, state) => const CreateNewOrderScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.editOrder,
+          builder: (context, state) {
+            final order = state.extra as Order?;
+            return order != null
+                ? EditOrderScreen(order: order)
+                : const Scaffold(body: Center(child: Text('Order not found')));
+          },
         ),
         GoRoute(
           path: AppRouter.notifications,
