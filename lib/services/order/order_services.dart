@@ -58,17 +58,20 @@ class OrderServices {
 
   Future<Order> createOrder({
     required String asmId,
-    required String distributorId,
-    required String chemistShopId,
-    required String doctorId,
+    String? distributorId,
+    String? chemistShopId,
+    String? doctorId,
     required List<Medicine> medicines,
     required double totalAmountRupees,
   }) async {
     try {
       final formData = FormData.fromMap({
-        'distributor_id': distributorId,
-        'chemist_shop_id': chemistShopId,
-        'doctor_id': doctorId,
+        if (distributorId != null && distributorId.trim().isNotEmpty)
+          'distributor_id': distributorId,
+        if (chemistShopId != null && chemistShopId.trim().isNotEmpty)
+          'chemist_shop_id': chemistShopId,
+        if (doctorId != null && doctorId.trim().isNotEmpty)
+          'doctor_id': doctorId,
         'products_with_price': jsonEncode(
           medicines.map((medicine) => medicine.toJson()).toList(),
         ),

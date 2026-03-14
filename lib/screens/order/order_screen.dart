@@ -38,7 +38,7 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
       },
       child: Scaffold(
         appBar: const MRAppBar(
-          titleText: 'MR Orders',
+          titleText: 'My Orders',
           subtitleText: 'Track your orders',
           showActions: false,
         ),

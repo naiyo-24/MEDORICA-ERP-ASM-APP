@@ -185,18 +185,6 @@ class _EditOrderScreenState extends ConsumerState<EditOrderScreen> {
       return;
     }
 
-    if (_selectedShop == null ||
-        _selectedDoctor == null ||
-        _selectedDistributor == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select chemist shop, doctor and distributor'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     final totalAmount = double.tryParse(_totalAmountController.text.trim());
     if (totalAmount == null || totalAmount < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -213,19 +201,19 @@ class _EditOrderScreenState extends ConsumerState<EditOrderScreen> {
           .read(orderNotifierProvider.notifier)
           .updateOrder(
             orderId: widget.order.id,
-            distributorId: _selectedDistributor!.id,
-            chemistShopId: _selectedShop!.id,
-            doctorId: _selectedDoctor!.id,
+            distributorId: _selectedDistributor?.id,
+            chemistShopId: _selectedShop?.id,
+            doctorId: _selectedDoctor?.id,
             medicines: _medicines,
             totalAmountRupees: totalAmount,
-            distributorName: _selectedDistributor!.name,
-            distributorPhoneNo: _selectedDistributor!.phoneNo,
-            distributorAddress: _selectedDistributor!.address ?? '',
-            distributorDeliveryTime: _selectedDistributor!.deliveryTime ?? '',
-            chemistShopName: _selectedShop!.name,
-            chemistShopPhoneNo: _selectedShop!.phoneNo,
-            chemistShopAddress: _selectedShop!.address ?? '',
-            doctorName: _selectedDoctor!.name,
+            distributorName: _selectedDistributor?.name ?? '',
+            distributorPhoneNo: _selectedDistributor?.phoneNo ?? '',
+            distributorAddress: _selectedDistributor?.address ?? '',
+            distributorDeliveryTime: _selectedDistributor?.deliveryTime ?? '',
+            chemistShopName: _selectedShop?.name ?? '',
+            chemistShopPhoneNo: _selectedShop?.phoneNo ?? '',
+            chemistShopAddress: _selectedShop?.address ?? '',
+            doctorName: _selectedDoctor?.name ?? '',
           );
     } catch (_) {
       final error = ref.read(orderNotifierProvider).error;

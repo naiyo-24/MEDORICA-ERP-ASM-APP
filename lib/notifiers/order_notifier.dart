@@ -69,9 +69,9 @@ class OrderNotifier extends StateNotifier<OrderState> {
 
   Future<void> createOrder({
     required String asmId,
-    required String distributorId,
-    required String chemistShopId,
-    required String doctorId,
+    String? distributorId,
+    String? chemistShopId,
+    String? doctorId,
     required List<Medicine> medicines,
     required double totalAmountRupees,
     String distributorName = '',

@@ -104,18 +104,6 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
       return;
     }
 
-    if (_selectedShop == null ||
-        _selectedDoctor == null ||
-        _selectedDistributor == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select chemist shop, doctor and distributor'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     final asmId = ref.read(authNotifierProvider).asmId;
     if (asmId == null || asmId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -137,19 +125,19 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
           .read(orderNotifierProvider.notifier)
           .createOrder(
             asmId: asmId,
-            distributorId: _selectedDistributor!.id,
-            chemistShopId: _selectedShop!.id,
-            doctorId: _selectedDoctor!.id,
+            distributorId: _selectedDistributor?.id,
+            chemistShopId: _selectedShop?.id,
+            doctorId: _selectedDoctor?.id,
             medicines: _medicines,
             totalAmountRupees: totalAmount,
-            distributorName: _selectedDistributor!.name,
-            distributorPhoneNo: _selectedDistributor!.phoneNo,
-            distributorAddress: _selectedDistributor!.address ?? '',
-            distributorDeliveryTime: _selectedDistributor!.deliveryTime ?? '',
-            chemistShopName: _selectedShop!.name,
-            chemistShopPhoneNo: _selectedShop!.phoneNo,
-            chemistShopAddress: _selectedShop!.address ?? '',
-            doctorName: _selectedDoctor!.name,
+            distributorName: _selectedDistributor?.name ?? '',
+            distributorPhoneNo: _selectedDistributor?.phoneNo ?? '',
+            distributorAddress: _selectedDistributor?.address ?? '',
+            distributorDeliveryTime: _selectedDistributor?.deliveryTime ?? '',
+            chemistShopName: _selectedShop?.name ?? '',
+            chemistShopPhoneNo: _selectedShop?.phoneNo ?? '',
+            chemistShopAddress: _selectedShop?.address ?? '',
+            doctorName: _selectedDoctor?.name ?? '',
           );
     } catch (_) {
       final error = ref.read(orderNotifierProvider).error;
@@ -212,7 +200,6 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
                 onChanged: (shop) {
                   setState(() {
                     _selectedShop = shop;
-                    _selectedDoctor = null; // Reset doctor when shop changes
                   });
                 },
                 icon: Iconsax.shop,
@@ -223,41 +210,19 @@ class _CreateNewOrderScreenState extends ConsumerState<CreateNewOrderScreen> {
               // Section 3: Doctor Selection
               _buildSectionTitle('Select Doctor'),
               const SizedBox(height: 16),
-              if (_selectedShop != null)
-                _buildDropdown<doctor_model.Doctor>(
-                  items: doctors,
-                  selectedItem: _selectedDoctor,
-                  label: 'Doctor',
-                  hint: 'Select a doctor',
-                  itemLabel: (doctor) =>
-                      '${doctor.name} (${doctor.specialization})',
-                  onChanged: (doctor) {
-                    setState(() => _selectedDoctor = doctor);
-                  },
-                  icon: Iconsax.user,
-                  isRequired: false,
-                )
-              else
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withAlpha(50),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primaryLight.withAlpha(100),
-                    ),
-                  ),
-                  child: Text(
-                    'Please select a chemist shop first',
-                    style: AppTypography.body.copyWith(
-                      color: AppColors.quaternary,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
+              _buildDropdown<doctor_model.Doctor>(
+                items: doctors,
+                selectedItem: _selectedDoctor,
+                label: 'Doctor',
+                hint: 'Select a doctor',
+                itemLabel: (doctor) =>
+                    '${doctor.name} (${doctor.specialization})',
+                onChanged: (doctor) {
+                  setState(() => _selectedDoctor = doctor);
+                },
+                icon: Iconsax.user,
+                isRequired: false,
+              ),
               const SizedBox(height: 24),
 
               // Section 3.5: Distributor Selection
