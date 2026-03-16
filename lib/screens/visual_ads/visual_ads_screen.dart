@@ -267,16 +267,23 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
             itemCount: ads.length,
             itemBuilder: (context, index) {
               final ad = ads[index];
-              return InteractiveViewer(
-                transformationController: _transformationController,
-                panEnabled: true,
-                scaleEnabled: true,
-                minScale: 1.0,
-                maxScale: 4.0,
-                clipBehavior: Clip.hardEdge,
-                child: Container(
-                  color: AppColors.black,
-                  child: _buildAdImage(ad),
+              return GestureDetector(
+                onDoubleTap: () {
+                  final newScale = (_currentScale == 1.0) ? 2.0 : 1.0;
+                  _setScaleCentered(newScale);
+                  setState(() => _currentScale = newScale);
+                },
+                child: InteractiveViewer(
+                  transformationController: _transformationController,
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  clipBehavior: Clip.hardEdge,
+                  child: Container(
+                    color: AppColors.black,
+                    child: _buildAdImage(ad),
+                  ),
                 ),
               );
             },
