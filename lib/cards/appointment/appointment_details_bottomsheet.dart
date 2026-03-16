@@ -110,6 +110,35 @@ class AppointmentDetailsBottomSheet extends ConsumerWidget {
                   ],
                 ),
               ),
+                const SizedBox(height: AppSpacing.md),
+                // Status Update Dropdown
+                _StatusUpdateSection(
+                  currentStatus: appointment.status,
+                  onStatusChanged: (newStatus) async {
+                    final asmId = ref.read(authNotifierProvider).asmId;
+                    if (asmId == null || asmId.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Unable to update status: ASM ID missing.'),
+                          backgroundColor: AppColors.error,
+                        ),
+                      );
+                      return;
+                    }
+                    final updatedAppointment = appointment.copyWith(status: newStatus);
+                    await ref.read(appointmentNotifierProvider.notifier).updateAppointment(
+                      asmId: asmId,
+                      appointment: updatedAppointment,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Appointment status updated.'),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                ),
               const SizedBox(height: AppSpacing.xl),
 
               // Doctor Information
@@ -387,6 +416,63 @@ class AppointmentDetailsBottomSheet extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StatusUpdateSection extends StatefulWidget {
+  final AppointmentStatus currentStatus;
+  final ValueChanged<AppointmentStatus> onStatusChanged;
+
+  const _StatusUpdateSection({
+    required this.currentStatus,
+    required this.onStatusChanged,
+  });
+
+  @override
+  State<_StatusUpdateSection> createState() => _StatusUpdateSectionState();
+}
+
+class _StatusUpdateSectionState extends State<_StatusUpdateSection> {
+  late AppointmentStatus _selectedStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedStatus = widget.currentStatus;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Update Status',
+          style: AppTypography.caption.copyWith(
+            color: AppColors.quaternary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        DropdownButton<AppointmentStatus>(
+          value: _selectedStatus,
+          items: AppointmentStatus.values.map((status) {
+            return DropdownMenuItem<AppointmentStatus>(
+              value: status,
+              child: Text(status.displayName),
+            );
+          }).toList(),
+          onChanged: (newStatus) {
+            if (newStatus != null && newStatus != _selectedStatus) {
+              setState(() {
+                _selectedStatus = newStatus;
+              });
+              widget.onStatusChanged(newStatus);
+            }
+          },
+        ),
+      ],
     );
   }
 }
