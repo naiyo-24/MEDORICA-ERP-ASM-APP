@@ -18,19 +18,20 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldExit = await showModalBottomSheet<bool>(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => const QuitAppBottomSheet(),
-        );
-        if (shouldExit == true) {
-          SystemNavigator.pop();
-          return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          final shouldExit = await showModalBottomSheet<bool>(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const QuitAppBottomSheet(),
+          );
+          if (shouldExit == true) {
+            SystemNavigator.pop();
+          }
         }
-        return false;
       },
       child: Scaffold(
         appBar: MRAppBar(showBack: false),
