@@ -15,6 +15,9 @@ class ApiUrl {
   // ASM Auth
   static const String asmLogin = '/onboarding/asm/login';
 
+  // ASM App Update Endpoints
+  static const String asmAppUpdateDownloadLatest = '/asm-app-updates/download/latest';
+
   // Profile Endpoints
   static String asmGetById(String asmId) => '/onboarding/asm/get-by/$asmId';
 

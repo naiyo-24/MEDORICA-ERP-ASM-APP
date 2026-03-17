@@ -1,3 +1,6 @@
+import 'services/update/app_update_services.dart';
+import 'widgets/update_app_screen.dart';
+import 'services/api_url.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -24,17 +27,21 @@ class _MyAppState extends ConsumerState<MyApp> {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   bool _hasInternet = true;
   bool _isRetrying = false;
+  bool _requiresUpdate = false;
+  String? _updateDownloadUrl;
 
   @override
   void initState() {
     super.initState();
     _checkConnection();
+    _checkAppUpdate();
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
       _,
     ) {
       _checkConnection();
+      _checkAppUpdate();
     });
-  }
+}
 
   @override
   void dispose() {
@@ -82,12 +89,44 @@ class _MyAppState extends ConsumerState<MyApp> {
       darkTheme: AppTheme.lightTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: _hasInternet
-          ? Router.withConfig(config: router)
-          : NoConnectionScreen(
-              isRetrying: _isRetrying,
-              onRetry: () => _checkConnection(setRetrying: true),
-            ),
+      home: _requiresUpdate
+          ? UpdateAppScreen(downloadUrl: _updateDownloadUrl)
+          : _hasInternet
+              ? Router.withConfig(config: router)
+              : NoConnectionScreen(
+                  isRetrying: _isRetrying,
+                  onRetry: () => _checkConnection(setRetrying: true),
+                ),
     );
   }
+
+  Future<void> _checkAppUpdate() async {
+    // Replace with your app's current version
+    const int currentVersion = 1; // e.g. 1 for 1.0.0+1
+    try {
+      final service = AppUpdateService();
+      final versions = await service.getAvailableVersions();
+      if (versions.isNotEmpty) {
+        final latestVersion = versions.first;
+        if (latestVersion > currentVersion) {
+          setState(() {
+            _requiresUpdate = true;
+            _updateDownloadUrl = ApiUrl.getFullUrl(ApiUrl.asmAppUpdateDownloadLatest);
+          });
+        } else {
+          setState(() {
+            _requiresUpdate = false;
+            _updateDownloadUrl = null;
+          });
+        }
+      }
+    } catch (_) {
+      // If version check fails, allow app usage
+      setState(() {
+        _requiresUpdate = false;
+        _updateDownloadUrl = null;
+      });
+    }
+  }
+
 }
