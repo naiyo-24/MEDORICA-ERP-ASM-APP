@@ -182,7 +182,7 @@ class _ChemistShopScreenState extends ConsumerState<ChemistShopScreen> {
               borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.18),
+                  color: AppColors.primary.withAlpha(180),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
