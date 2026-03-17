@@ -85,13 +85,51 @@ class _MyAppointmentScreenState extends ConsumerState<MyAppointmentScreen> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context.push('/asm/appointments/schedule'),
-          backgroundColor: AppColors.primary,
-          icon: const Icon(Iconsax.add, color: AppColors.white),
-          label: Text(
-            'New Appointment',
-            style: AppTypography.buttonMedium.copyWith(color: AppColors.white),
+        floatingActionButton: GestureDetector(
+          onTap: () => context.push('/asm/appointments/schedule'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.18),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(
+                    Iconsax.add_square,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'New Appointment',
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: const MRBottomNavBar(currentIndex: 6),
@@ -157,27 +195,7 @@ class _MyAppointmentScreenState extends ConsumerState<MyAppointmentScreen> {
                   : 'No appointments yet',
               style: AppTypography.h3.copyWith(color: AppColors.quaternary),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              hasActiveFilters
-                  ? 'Try adjusting your filters'
-                  : 'Schedule your first appointment',
-              style: AppTypography.body.copyWith(color: AppColors.quaternary),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            if (!hasActiveFilters)
-              ElevatedButton.icon(
-                onPressed: () => context.push('/asm/appointments/schedule'),
-                style: AppButtonStyles.primaryButton(height: 44),
-                icon: const Icon(Iconsax.add, color: AppColors.white),
-                label: Text(
-                  'Schedule Appointment',
-                  style: AppTypography.buttonMedium.copyWith(
-                    color: AppColors.white,
-                  ),
-                ),
-              ),
+            
           ],
         ),
       ),

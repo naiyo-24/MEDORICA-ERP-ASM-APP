@@ -169,16 +169,50 @@ class _ChemistShopScreenState extends ConsumerState<ChemistShopScreen> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context.push(AppRouter.addEditChemistShop),
-          elevation: 4,
-          backgroundColor: AppColors.primary,
-          icon: const Icon(Iconsax.add, color: AppColors.white, size: 24),
-          label: Text(
-            'Add Shop',
-            style: AppTypography.body.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.w700,
+        floatingActionButton: GestureDetector(
+          onTap: () => context.push(AppRouter.addEditChemistShop),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.18),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(
+                    Iconsax.add_square,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Add a new Chemist Shop',
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

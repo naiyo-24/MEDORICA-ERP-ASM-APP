@@ -61,10 +61,52 @@ class _MyDoctorScreenState extends ConsumerState<MyDoctorScreen> {
           titleText: 'My Doctors',
           subtitleText: 'List of doctors you manage',
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => context.go('/asm/doctor/add'),
-          backgroundColor: AppColors.primary,
-          child: const Icon(Icons.add, color: AppColors.white),
+        floatingActionButton: GestureDetector(
+          onTap: () => context.go('/asm/doctor/add'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.18),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(
+                    Iconsax.add_square,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Add Doctor',
+                  style: AppTypography.bodyLarge.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
