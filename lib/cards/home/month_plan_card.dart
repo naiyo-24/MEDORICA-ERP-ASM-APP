@@ -49,10 +49,10 @@ class MonthPlanCard extends StatelessWidget {
                   onPressed: () => context.push('/month-plans/create'),
                   style: AppButtonStyles.primaryButton(
                     borderRadius: 12.0,
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.secondary,
+                    backgroundColor: AppColors.secondary,
+                    foregroundColor: AppColors.primary,
                   ),
-                  child: Text('Create Plan', style: AppTypography.buttonMedium.copyWith(color: AppColors.primary)),
+                  child: Text('Create Plan', style: AppTypography.buttonMedium.copyWith(color: AppColors.white)),
                 ),
               ),
             ],
