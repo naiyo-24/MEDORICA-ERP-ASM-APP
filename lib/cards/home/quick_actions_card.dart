@@ -68,9 +68,9 @@ class MRQuickActionsCard extends StatelessWidget {
         onTap: () => context.push(AppRouter.orders),
       ),
       (
-        icon: Iconsax.location,
-        label: 'Set Targets',
-        onTap: () => context.push(AppRouter.monthPlans),
+        icon: Iconsax.gift5,
+        label: 'Gifts',
+        onTap: () => context.push(AppRouter.gifts),
       ),
       (
         icon: Iconsax.presention_chart,

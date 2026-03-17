@@ -1,4 +1,5 @@
 class ApiUrl {
+    
   // Default base URL for physical devices on the same LAN as the backend.
   static const String _defaultBaseUrl = 'http://192.168.1.44:8000';
 
@@ -143,4 +144,13 @@ class ApiUrl {
       '/order/asm/update-by/$orderId';
   static String orderAsmDeleteByOrderId(String orderId) =>
       '/order/asm/delete-by/$orderId';
+
+  // Gift Inventory Endpoints
+  static const String giftInventoryGetAll = '/gift-inventory/get-all';
+
+  // ASM Gift Application Endpoints
+  static const String asmGiftApplicationPost = '/gift-application/asm/post';
+  static String asmGiftApplicationGetByAsmId(String asmId) => '/gift-application/asm/get-by-asm/$asmId';
+  static String asmGiftApplicationUpdateByAsmAndRequestId(String asmId, int requestId) => '/gift-application/asm/update-by/$asmId/$requestId';
+  static String asmGiftApplicationDeleteByRequestId(int requestId) => '/gift-application/asm/delete-by/$requestId';
 }

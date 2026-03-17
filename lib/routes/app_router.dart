@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/gift/gift_screen.dart';
+import '../screens/gift/send_edit_gift_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/notification/notification_screen.dart';
 import '../screens/profile/profile_screen.dart';
@@ -34,6 +36,8 @@ import '../screens/month_plan/create_edit_plan_screen.dart';
 import '../models/month_plan.dart';
 
 class AppRouter {
+    static const String gifts = '/gifts';
+    static const String sendEditGift = '/send-edit-gift';
   // Route paths
   static const String splash = '/';
   static const String login = '/login';
@@ -68,6 +72,17 @@ class AppRouter {
     return GoRouter(
       initialLocation: AppRouter.splash,
       routes: [
+        GoRoute(
+          path: AppRouter.gifts,
+          builder: (context, state) => const GiftScreen(),
+        ),
+        GoRoute(
+          path: AppRouter.sendEditGift,
+          builder: (context, state) {
+            final application = state.extra as dynamic;
+            return SendEditGiftScreen(application: application);
+          },
+        ),
         GoRoute(
           path: AppRouter.splash,
           builder: (context, state) => const SplashScreen(),
