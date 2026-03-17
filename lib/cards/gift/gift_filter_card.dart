@@ -81,15 +81,25 @@ class _GiftFilterCardState extends State<GiftFilterCard> {
                   fillColor: AppColors.white,
                   isDense: true,
                 ),
-                value: _doctorId,
-                style: AppTypography.body,
+                initialValue: _doctorId,
+                style: AppTypography.body.copyWith(color: AppColors.primary),
+                dropdownColor: AppColors.white,
                 items: [
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: null,
-                    child: Text('All Doctors'),
+                    child: Text(
+                      'All Doctors',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
                   ),
                   ...widget.doctors.map(
-                    (d) => DropdownMenuItem(value: d.id, child: Text(d.name)),
+                    (d) => DropdownMenuItem(
+                      value: d.id,
+                      child: Text(
+                        d.name,
+                        style: const TextStyle(color: AppColors.primary),
+                      ),
+                    ),
                   ),
                 ],
                 onChanged: (value) {
@@ -122,13 +132,38 @@ class _GiftFilterCardState extends State<GiftFilterCard> {
                   fillColor: AppColors.white,
                   isDense: true,
                 ),
-                value: _status ?? '',
-                style: AppTypography.body,
+                initialValue: _status ?? '',
+                style: AppTypography.body.copyWith(color: AppColors.primary),
+                dropdownColor: AppColors.white,
                 items: const [
-                  DropdownMenuItem(value: '', child: Text('All Statuses')),
-                  DropdownMenuItem(value: 'pending', child: Text('Pending')),
-                  DropdownMenuItem(value: 'approved', child: Text('Approved')),
-                  DropdownMenuItem(value: 'rejected', child: Text('Rejected')),
+                  DropdownMenuItem(
+                    value: '',
+                    child: Text(
+                      'All Statuses',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'pending',
+                    child: Text(
+                      'Pending',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'approved',
+                    child: Text(
+                      'Approved',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'rejected',
+                    child: Text(
+                      'Rejected',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
                 ],
                 onChanged: (value) {
                   setState(() => _status = value);
