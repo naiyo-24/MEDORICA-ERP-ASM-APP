@@ -512,7 +512,7 @@ class _AddEditDoctorScreenState extends ConsumerState<AddEditDoctorScreen> {
                 child: _loading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                        style: AppButtonStyles.primaryButton(height: 56),
+                        style: AppButtonStyles.primaryButton(height: 56, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                         onPressed: _submit,
                         child: Text(
                           isEditing ? 'Update Doctor' : 'Add Doctor',

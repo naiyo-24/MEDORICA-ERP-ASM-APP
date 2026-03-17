@@ -279,7 +279,7 @@ class MRAttendanceCard extends ConsumerWidget {
 
             if (attendance == null || !attendance.isCheckedIn) ...[
               ElevatedButton.icon(
-                style: AppButtonStyles.primaryButton(),
+                style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                 onPressed: () async {
                   final file = await _takeSelfie();
                   if (file == null) {

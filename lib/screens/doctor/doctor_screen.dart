@@ -164,7 +164,7 @@ class _MyDoctorScreenState extends ConsumerState<MyDoctorScreen> {
                                   .loadDoctorsByAsmId(asmId);
                             }
                           },
-                          style: AppButtonStyles.primaryButton(height: 44),
+                          style: AppButtonStyles.primaryButton(height: 44,backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                           child: Text(
                             'Retry',
                             style: AppTypography.buttonMedium.copyWith(

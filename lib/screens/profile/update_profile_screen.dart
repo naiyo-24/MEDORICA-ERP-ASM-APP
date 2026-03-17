@@ -409,7 +409,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
                 const SizedBox(height: AppSpacing.lg),
                 ElevatedButton(
                   onPressed: () => context.pop(),
-                  style: AppButtonStyles.primaryButton(),
+                  style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                   child: const Text('Go Back'),
                 ),
               ],
@@ -676,7 +676,7 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: isSaving ? null : _saveProfile,
-                style: AppButtonStyles.primaryButton(height: 52),
+                style: AppButtonStyles.primaryButton(height: 52, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                 child: Text(
                   isSaving ? 'Saving...' : 'Save Profile',
                   style: AppTypography.buttonLarge.copyWith(

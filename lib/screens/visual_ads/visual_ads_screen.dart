@@ -244,7 +244,7 @@ class _VisualAdsScreenState extends ConsumerState<VisualAdsScreen> {
               ElevatedButton(
                 onPressed: () =>
                     ref.read(visualAdsProvider.notifier).refreshVisualAds(),
-                style: AppButtonStyles.primaryButton(height: 44),
+                style: AppButtonStyles.primaryButton(height: 44, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                 child: const Text('Retry'),
               ),
             ],

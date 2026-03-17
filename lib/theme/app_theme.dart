@@ -225,7 +225,7 @@ class AppButtonStyles {
   // Primary Button - Bold, Full Width, Premium
   static ButtonStyle primaryButton({
     double height = 48.0,
-    double borderRadius = 12.0,
+    double borderRadius = 12.0, required Color backgroundColor, required Color foregroundColor,
   }) {
     return ElevatedButton.styleFrom(
       backgroundColor: AppColors.primary,
@@ -654,7 +654,7 @@ class AppTheme {
 
       // Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: AppButtonStyles.primaryButton(),
+        style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: AppButtonStyles.secondaryButton(),

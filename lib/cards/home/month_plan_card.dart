@@ -17,15 +17,15 @@ class MonthPlanCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: AppColors.white.withAlpha(120), borderRadius: BorderRadius.circular(12)),
-                child: const Icon(Icons.calendar_today, color: AppColors.white),
+                decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(12)),
+                child: const Icon(Icons.calendar_today, color: AppColors.primary),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Monthly Planning', style: AppTypography.caption.copyWith(color: AppColors.white, fontWeight: FontWeight.w800)),
+                    Text('Monthly Planning', style: AppTypography.bodyLarge.copyWith(color: AppColors.white, fontWeight: FontWeight.w800)),
                     const SizedBox(height: AppSpacing.xs),
                     Text('Create and view daily plans for your team — schedule step-by-step activities for each MR and track their monthly plan.', style: AppTypography.description.copyWith(color: AppColors.white, height: 1.3)),
                   ],
@@ -47,8 +47,12 @@ class MonthPlanCard extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () => context.push('/month-plans/create'),
-                  style: AppButtonStyles.primaryButton(borderRadius: 12.0),
-                  child: Text('Create Plan', style: AppTypography.buttonMedium.copyWith(color: AppColors.white)),
+                  style: AppButtonStyles.primaryButton(
+                    borderRadius: 12.0,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.secondary,
+                  ),
+                  child: Text('Create Plan', style: AppTypography.buttonMedium.copyWith(color: AppColors.primary)),
                 ),
               ),
             ],

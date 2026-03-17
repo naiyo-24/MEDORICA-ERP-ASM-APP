@@ -285,7 +285,7 @@ class _SendEditGiftScreenState extends ConsumerState<SendEditGiftScreen> {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     ElevatedButton.icon(
-                      style: AppButtonStyles.primaryButton(),
+                      style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                       icon: Icon(widget.application == null ? Iconsax.send_2 : Iconsax.edit, size: 20),
                       label: Text(widget.application == null ? 'Request Gift' : 'Update Request'),
                       onPressed: () async {

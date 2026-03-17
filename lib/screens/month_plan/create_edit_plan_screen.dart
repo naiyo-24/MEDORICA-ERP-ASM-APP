@@ -128,7 +128,7 @@ class _CreateEditPlanScreenState extends ConsumerState<CreateEditPlanScreen> {
             const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: isSubmitting ? null : _savePlan,
-              style: AppButtonStyles.primaryButton(),
+              style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
               child: isSubmitting
                   ? const SizedBox(
                       width: 18,

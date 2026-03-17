@@ -642,7 +642,7 @@ class _ScheduleEditAppointmentScreenState
                     children: [
                       ElevatedButton.icon(
                         onPressed: _pickCompletionProofImage,
-                        style: AppButtonStyles.primaryButton(height: 42),
+                        style: AppButtonStyles.primaryButton(height: 42, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                         icon: const Icon(
                           Iconsax.camera,
                           color: AppColors.white,
@@ -687,7 +687,7 @@ class _ScheduleEditAppointmentScreenState
               // Save Button
               ElevatedButton(
                 onPressed: _isSubmitting ? null : _saveAppointment,
-                style: AppButtonStyles.primaryButton(),
+                style: AppButtonStyles.primaryButton(backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                 child: Text(
                   _isSubmitting
                       ? 'Saving...'

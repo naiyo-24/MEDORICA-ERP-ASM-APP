@@ -225,7 +225,7 @@ class AppointmentDetailsBottomSheet extends ConsumerWidget {
                     Navigator.of(context).pop();
                     context.push('${AppRouter.visualAds}?adIds=$encodedIds');
                   },
-                  style: AppButtonStyles.primaryButton(height: 46),
+                  style: AppButtonStyles.primaryButton(height: 46, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                   icon: const Icon(Iconsax.play, color: AppColors.white),
                   label: Text(
                     'Present Visual Ads Now',
@@ -275,7 +275,7 @@ class AppointmentDetailsBottomSheet extends ConsumerWidget {
                           extra: appointment,
                         );
                       },
-                      style: AppButtonStyles.primaryButton(height: 44),
+                      style: AppButtonStyles.primaryButton(height: 44, backgroundColor: AppColors.primary, foregroundColor: AppColors.secondary),
                       icon: const Icon(
                         Iconsax.edit,
                         color: AppColors.white,
