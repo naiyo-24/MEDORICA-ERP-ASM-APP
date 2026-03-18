@@ -7,6 +7,7 @@ import '../../providers/team_provider.dart';
 import '../../providers/month_plan_provider.dart';
 import '../../models/month_plan.dart';
 import '../../models/team.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CreateEditPlanScreen extends ConsumerStatefulWidget {
   final MonthPlanEntry? initialEntry;
@@ -129,7 +130,7 @@ class _CreateEditPlanScreenState extends ConsumerState<CreateEditPlanScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      icon: const Icon(Iconsax.edit, color: AppColors.primary),
                       onPressed: () {
                         setState(() {
                           _timeCtr.text = step.time;
@@ -140,7 +141,7 @@ class _CreateEditPlanScreenState extends ConsumerState<CreateEditPlanScreen> {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon: const Icon(Iconsax.trash, color: AppColors.error),
                       onPressed: () {
                         setState(() {
                           _steps.removeAt(idx);
@@ -328,6 +329,12 @@ class _CreateEditPlanScreenState extends ConsumerState<CreateEditPlanScreen> {
       };
       try {
         await notifier.updatePlanById(existing.planId?.toString() ?? '', payload);
+        ref.invalidate(monthPlanForMemberAndDateProvider({
+          'memberId': updated.memberId,
+          'date': updated.date,
+        }));
+        ref.invalidate(monthPlanForMemberProvider(updated.memberId));
+        ref.invalidate(monthPlanNotifierProvider);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan updated successfully')));
           context.pop();

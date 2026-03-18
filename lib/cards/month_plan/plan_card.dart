@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../theme/app_theme.dart';
 import '../../models/month_plan.dart';
 import '../../providers/month_plan_provider.dart';
@@ -27,14 +28,14 @@ class PlanCard extends ConsumerWidget {
                 children: [
                   IconButton(
                     tooltip: 'Edit',
-                    icon: const Icon(Icons.edit, size: 20, color: AppColors.primary),
+                    icon: const Icon(Iconsax.edit, size: 20, color: AppColors.primary),
                     onPressed: () {
                       context.push('/month-plans/create', extra: entry);
                     },
                   ),
                   IconButton(
                     tooltip: 'Delete',
-                    icon: const Icon(Icons.delete, size: 20, color: Colors.redAccent),
+                    icon: const Icon(Iconsax.trash, size: 20, color: AppColors.error),
                     onPressed: () async {
                       final ok = await showDialog<bool>(
                         context: context,
@@ -54,6 +55,7 @@ class PlanCard extends ConsumerWidget {
                             'memberId': entry.memberId,
                             'date': entry.date,
                           }));
+                          ref.invalidate(monthPlanForMemberProvider(entry.memberId));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan deleted successfully')));
                           }
