@@ -50,6 +50,10 @@ class PlanCard extends ConsumerWidget {
                       if (ok == true) {
                         try {
                           await ref.read(monthPlanNotifierProvider.notifier).deletePlanById(entry.planId?.toString() ?? '');
+                          ref.invalidate(monthPlanForMemberAndDateProvider({
+                            'memberId': entry.memberId,
+                            'date': entry.date,
+                          }));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan deleted successfully')));
                           }
