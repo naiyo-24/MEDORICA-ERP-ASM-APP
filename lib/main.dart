@@ -125,12 +125,18 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future<void> _checkAppUpdate() async {
     // Read current version from pubspec.yaml
-    String currentVersion = '1.0.0+105';
+    String currentVersion = 'unknown';
+    int currentBuildNumber = -1;
     try {
       final pubspec = await File('pubspec.yaml').readAsLines();
       for (final line in pubspec) {
         if (line.trim().startsWith('version:')) {
           currentVersion = line.split(':').last.trim();
+          // Extract build number from pubspec.yaml (e.g., 1.0.0+104)
+          final parts = currentVersion.split('+');
+          if (parts.length == 2) {
+            currentBuildNumber = int.tryParse(parts[1]) ?? -1;
+          }
           break;
         }
       }
@@ -142,7 +148,17 @@ class _MyAppState extends ConsumerState<MyApp> {
       final latestVersion = info['version'] as String?;
       final apkFile = info['apk_file'] as String?;
       final apkUrl = info['apk_url'] as String?;
-      if (latestVersion != null && apkFile != null && apkUrl != null && latestVersion != currentVersion) {
+      // Extract build number from update service (e.g., asm_app_ver_104.apk)
+      int latestBuildNumber = -1;
+      if (latestVersion != null) {
+        final regExp = RegExp(r'_(\d+)\.apk');
+        final match = regExp.firstMatch(latestVersion);
+        if (match != null && match.groupCount >= 1) {
+          latestBuildNumber = int.tryParse(match.group(1)!) ?? -1;
+        }
+      }
+      // Only require update if build numbers do not match
+      if (latestBuildNumber != -1 && currentBuildNumber != -1 && latestBuildNumber != currentBuildNumber && apkFile != null && apkUrl != null) {
         setState(() {
           _requiresUpdate = true;
           _apkFilename = apkFile;

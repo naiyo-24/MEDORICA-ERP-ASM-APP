@@ -51,14 +51,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       return;
     }
 
-    // Use post-frame callback for navigation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Schedule navigation only if SplashScreen is still visible
+    Future.microtask(() {
       if (!mounted) {
-        debugPrint('SplashScreen: Not mounted in post-frame, abort navigation');
+        debugPrint('SplashScreen: Not mounted in microtask, abort navigation');
         return;
       }
       final authState = ref.read(authNotifierProvider);
-      debugPrint('SplashScreen: Navigation triggered, isAuthenticated=${authState.isAuthenticated}, asmId=${authState.asmId}');
       if (authState.isAuthenticated && (authState.asmId?.isNotEmpty ?? false)) {
         context.go(AppRouter.home);
       } else {
@@ -87,16 +86,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
               children: [
                 Image.asset('assets/logo/logo.png', width: 400, height: 400),
                 const SizedBox(height: 24),
-                // Debug info for troubleshooting stuck splash
-                Builder(builder: (context) {
-                  final authState = ref.read(authNotifierProvider);
-                  return Column(
-                    children: [
-                      Text('Debug: isAuthenticated=${authState.isAuthenticated}', style: TextStyle(color: Colors.white)),
-                      Text('Debug: asmId=${authState.asmId}', style: TextStyle(color: Colors.white)),
-                    ],
-                  );
-                }),
+                
               ],
             ),
           ),
