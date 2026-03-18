@@ -119,12 +119,38 @@ class _CreateEditPlanScreenState extends ConsumerState<CreateEditPlanScreen> {
             const SizedBox(height: AppSpacing.sm),
             _buildStepForm(),
             const SizedBox(height: AppSpacing.md),
-            ..._steps.map(
-              (s) => ListTile(
-                title: Text(s.title),
-                subtitle: Text('${s.time} • ${s.description}'),
-              ),
-            ),
+            ..._steps.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final step = entry.value;
+              return ListTile(
+                title: Text(step.title),
+                subtitle: Text('${step.time} • ${step.description}'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        setState(() {
+                          _timeCtr.text = step.time;
+                          _titleCtr.text = step.title;
+                          _descCtr.text = step.description;
+                          _steps.removeAt(idx);
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _steps.removeAt(idx);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            }),
             const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: isSubmitting ? null : _savePlan,
