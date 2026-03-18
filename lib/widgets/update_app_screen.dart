@@ -7,9 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
 class UpdateAppScreen extends StatelessWidget {
-  final String? downloadUrl;
-
-  const UpdateAppScreen({super.key, this.downloadUrl});
+  final String? apkFilename;
+  final String? apkUrl;
+  final String? latestVersion;
+  const UpdateAppScreen({super.key, this.apkFilename, this.apkUrl, this.latestVersion});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,11 @@ class UpdateAppScreen extends StatelessWidget {
               borderRadius: AppBorderRadius.xl,
             ),
             padding: const EdgeInsets.all(AppSpacing.huge),
-            child: _UpdateAppContent(downloadUrl: downloadUrl),
+            child: _UpdateAppContent(
+              apkFilename: apkFilename,
+              apkUrl: apkUrl,
+              latestVersion: latestVersion,
+            ),
           ),
         ),
       ),
@@ -33,8 +38,10 @@ class UpdateAppScreen extends StatelessWidget {
 }
 
 class _UpdateAppContent extends StatefulWidget {
-  final String? downloadUrl;
-  const _UpdateAppContent({this.downloadUrl});
+  final String? apkFilename;
+  final String? apkUrl;
+  final String? latestVersion;
+  const _UpdateAppContent({this.apkFilename, this.apkUrl, this.latestVersion});
 
   @override
   State<_UpdateAppContent> createState() => _UpdateAppContentState();
@@ -53,10 +60,10 @@ class _UpdateAppContentState extends State<_UpdateAppContent> {
     });
     try {
       final dir = await getExternalStorageDirectory();
-      final filePath = '${dir!.path}/asm-app-latest.apk';
+      final filePath = '${dir!.path}/${widget.apkFilename ?? 'asm-app-latest.apk'}';
       final dio = Dio();
       await dio.download(
-        widget.downloadUrl!,
+        widget.apkUrl!,
         filePath,
         onReceiveProgress: (received, total) {
           setState(() {
@@ -103,7 +110,7 @@ class _UpdateAppContentState extends State<_UpdateAppContent> {
         ),
         const SizedBox(height: AppSpacing.xxl),
         Text(
-          'A new version of the ASM App is available!',
+          'A new version (${widget.latestVersion ?? ''}) of the ASM App is available!',
           style: AppTypography.h3.copyWith(color: AppColors.primary),
           textAlign: TextAlign.center,
         ),
@@ -126,7 +133,7 @@ class _UpdateAppContentState extends State<_UpdateAppContent> {
           ElevatedButton.icon(
             icon: const Icon(Iconsax.document_download, size: 24),
             label: Text('Download Update', style: AppTypography.buttonLarge),
-            onPressed: widget.downloadUrl != null ? _downloadAndInstallApk : null,
+            onPressed: widget.apkUrl != null ? _downloadAndInstallApk : null,
             style: AppButtonStyles.primaryButton(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.white,

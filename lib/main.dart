@@ -28,7 +28,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   bool _hasInternet = true;
   bool _isRetrying = false;
   bool _requiresUpdate = false;
-  String? _updateDownloadUrl;
+  String? _apkFilename;
+  String? _apkUrl;
+  String? _latestVersion;
 
   @override
   void initState() {
@@ -90,7 +92,11 @@ class _MyAppState extends ConsumerState<MyApp> {
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: _requiresUpdate
-          ? UpdateAppScreen(downloadUrl: _updateDownloadUrl)
+          ? UpdateAppScreen(
+              apkFilename: _apkFilename,
+              apkUrl: _apkUrl,
+              latestVersion: _latestVersion,
+            )
           : _hasInternet
               ? Router.withConfig(config: router)
               : NoConnectionScreen(
@@ -101,30 +107,45 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Future<void> _checkAppUpdate() async {
-    // Replace with your app's current version
-    const int currentVersion = 1; // e.g. 1 for 1.0.0+1
+    // Read current version from pubspec.yaml
+    String currentVersion = '1.0.0+105';
     try {
-      final service = AppUpdateService();
-      final versions = await service.getAvailableVersions();
-      if (versions.isNotEmpty) {
-        final latestVersion = versions.first;
-        if (latestVersion > currentVersion) {
-          setState(() {
-            _requiresUpdate = true;
-            _updateDownloadUrl = ApiUrl.getFullUrl(ApiUrl.asmAppUpdateDownloadLatest);
-          });
-        } else {
-          setState(() {
-            _requiresUpdate = false;
-            _updateDownloadUrl = null;
-          });
+      final pubspec = await File('pubspec.yaml').readAsLines();
+      for (final line in pubspec) {
+        if (line.trim().startsWith('version:')) {
+          currentVersion = line.split(':').last.trim();
+          break;
         }
       }
+    } catch (_) {}
+
+    try {
+      final service = AppUpdateService();
+      final info = await service.getLatestVersionInfo();
+      final latestVersion = info['version'] as String?;
+      final apkFile = info['apk_file'] as String?;
+      final apkUrl = info['apk_url'] as String?;
+      if (latestVersion != null && apkFile != null && apkUrl != null && latestVersion != currentVersion) {
+        setState(() {
+          _requiresUpdate = true;
+          _apkFilename = apkFile;
+          _apkUrl = ApiUrl.getFullUrl(apkUrl);
+          _latestVersion = latestVersion;
+        });
+      } else {
+        setState(() {
+          _requiresUpdate = false;
+          _apkFilename = null;
+          _apkUrl = null;
+          _latestVersion = null;
+        });
+      }
     } catch (_) {
-      // If version check fails, allow app usage
       setState(() {
         _requiresUpdate = false;
-        _updateDownloadUrl = null;
+        _apkFilename = null;
+        _apkUrl = null;
+        _latestVersion = null;
       });
     }
   }

@@ -16,22 +16,19 @@ class AppUpdateService {
 					maxWidth: 120,
 				));
 
-	Future<Response> downloadLatestApk() async {
-		final url = ApiUrl.getFullUrl(ApiUrl.asmAppUpdateDownloadLatest);
+	Future<Map<String, dynamic>> getLatestVersionInfo() async {
+		final url = ApiUrl.getFullUrl(ApiUrl.asmAppUpdateLatestVersion);
+		final response = await _dio.get(url);
+		if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+			return response.data;
+		}
+		throw Exception('Failed to fetch latest version info');
+	}
+
+	Future<Response> downloadApkByFilename(String filename) async {
+		final url = ApiUrl.getFullUrl(ApiUrl.asmAppUpdateDownloadByFilename(filename));
 		return await _dio.get(url,
 			options: Options(responseType: ResponseType.bytes),
 		);
-	}
-
-	Future<List<int>> getAvailableVersions() async {
-		final url = ApiUrl.getFullUrl('/asm-app-updates/versions');
-		final response = await _dio.get(url);
-		if (response.statusCode == 200 && response.data is Map) {
-			final versions = response.data['versions'];
-			if (versions is List) {
-				return versions.cast<int>();
-			}
-		}
-		throw Exception('Failed to fetch versions');
 	}
 }
