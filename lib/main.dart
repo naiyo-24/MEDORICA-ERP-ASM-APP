@@ -85,24 +85,41 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final router = AppRouter.router(ref);
 
-    return MaterialApp(
+    if (_requiresUpdate) {
+      return MaterialApp(
+        title: 'ASM App',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.lightTheme,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
+        home: UpdateAppScreen(
+          apkFilename: _apkFilename,
+          apkUrl: _apkUrl,
+          latestVersion: _latestVersion,
+        ),
+      );
+    }
+    if (!_hasInternet) {
+      return MaterialApp(
+        title: 'ASM App',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.lightTheme,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
+        home: NoConnectionScreen(
+          isRetrying: _isRetrying,
+          onRetry: () => _checkConnection(setRetrying: true),
+        ),
+      );
+    }
+    // Use MaterialApp.router for GoRouter context
+    return MaterialApp.router(
       title: 'ASM App',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.lightTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: _requiresUpdate
-          ? UpdateAppScreen(
-              apkFilename: _apkFilename,
-              apkUrl: _apkUrl,
-              latestVersion: _latestVersion,
-            )
-          : _hasInternet
-              ? Router.withConfig(config: router)
-              : NoConnectionScreen(
-                  isRetrying: _isRetrying,
-                  onRetry: () => _checkConnection(setRetrying: true),
-                ),
+      routerConfig: router,
     );
   }
 

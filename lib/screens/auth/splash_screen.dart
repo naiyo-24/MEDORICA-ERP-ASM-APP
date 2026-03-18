@@ -15,8 +15,7 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _scale;
   late final Animation<double> _fade;
@@ -52,7 +51,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       return;
     }
 
+    // Use post-frame callback for navigation
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        debugPrint('SplashScreen: Not mounted in post-frame, abort navigation');
+        return;
+      }
       final authState = ref.read(authNotifierProvider);
       debugPrint('SplashScreen: Navigation triggered, isAuthenticated=${authState.isAuthenticated}, asmId=${authState.asmId}');
       if (authState.isAuthenticated && (authState.asmId?.isNotEmpty ?? false)) {
