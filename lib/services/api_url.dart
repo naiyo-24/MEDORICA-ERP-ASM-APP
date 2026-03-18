@@ -1,7 +1,7 @@
 class ApiUrl {
     
   // Default base URL for physical devices on the same LAN as the backend.
-  static const String _defaultBaseUrl = 'http://10.0.2.2:8000';
+  static const String _defaultBaseUrl = 'https://appbackend.medoricapharma.com';
 
   // Override at runtime if needed:
   // flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
