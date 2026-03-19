@@ -11,7 +11,7 @@ class AttendanceDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPresent = attendance?.isCheckedIn == true && attendance?.date == date;
+    final isPresent = (attendance?.status?.toLowerCase() == 'present');
     final checkIn = attendance?.checkIn;
     final checkOut = attendance?.checkOut;
     final status = attendance?.status ?? (isPresent ? 'Present' : 'Absent');

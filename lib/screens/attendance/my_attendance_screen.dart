@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../models/attendance.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
 import '../../cards/attendance/calendar_card.dart';
@@ -18,8 +19,10 @@ class _MyAttendanceScreenState extends ConsumerState<MyAttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final attendance = ref.watch(attendanceNotifierProvider);
-    ref.read(attendanceNotifierProvider.notifier);
+    final month = _selectedDate != null
+      ? DateTime(_selectedDate!.year, _selectedDate!.month)
+      : DateTime.now();
+    final monthAttendanceAsync = ref.watch(monthAttendanceProvider(month));
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -43,11 +46,30 @@ class _MyAttendanceScreenState extends ConsumerState<MyAttendanceScreen> {
             ),
           ),
           if (_selectedDate != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: AttendanceDetailsCard(
-                date: _selectedDate!,
-                attendance: attendance,
+            monthAttendanceAsync.when(
+              data: (records) {
+                final att = records.cast<Attendance?>().firstWhere(
+                  (a) => a != null &&
+                          a.date.year == _selectedDate!.year &&
+                          a.date.month == _selectedDate!.month &&
+                          a.date.day == _selectedDate!.day,
+                  orElse: () => null,
+                );
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: AttendanceDetailsCard(
+                    date: _selectedDate!,
+                    attendance: att,
+                  ),
+                );
+              },
+              loading: () => const Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, _) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Center(child: Text('Error loading attendance')), 
               ),
             ),
         ],
