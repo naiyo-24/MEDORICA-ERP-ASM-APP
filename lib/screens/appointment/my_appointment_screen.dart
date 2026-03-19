@@ -43,8 +43,8 @@ class _MyAppointmentScreenState extends ConsumerState<MyAppointmentScreen> {
         appBar: MRAppBar(
           showBack: false,
           showActions: false,
-          titleText: 'My Appointments',
-          subtitleText: 'View and Manage',
+          titleText: 'My DCR',
+          subtitleText: 'View and Manage Doctor Call Reports',
         ),
         body: Column(
           children: [

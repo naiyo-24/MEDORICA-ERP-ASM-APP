@@ -116,7 +116,7 @@ class _AppointmentFilterOptionsCardState
                     const Icon(Iconsax.filter, color: AppColors.primary, size: 20),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
-                      'Filter Appointments',
+                      'Filter DCRs',
                       style:
                           AppTypography.tagline.copyWith(color: AppColors.black),
                     ),
