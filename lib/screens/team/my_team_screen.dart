@@ -7,6 +7,7 @@ import '../../cards/team/team_card.dart';
 import '../../providers/team_provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../routes/app_router.dart';
+import '../../widgets/loader.dart';
 
 class MyTeamScreen extends ConsumerWidget {
   const MyTeamScreen({super.key});
@@ -32,7 +33,13 @@ class MyTeamScreen extends ConsumerWidget {
           subtitleText: 'Manage your sales teams',
         ),
         body: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: Loader(
+                  text: 'Loading teams...',
+                  logoSize: 36.0,
+                  backgroundColor: Colors.transparent,
+                ),
+              )
             : error != null && error.isNotEmpty
             ? Center(
                 child: Padding(

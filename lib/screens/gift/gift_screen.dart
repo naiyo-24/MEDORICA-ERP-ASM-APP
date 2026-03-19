@@ -8,6 +8,7 @@ import '../../providers/doctor_provider.dart';
 import '../../cards/gift/gift_filter_card.dart';
 import '../../cards/gift/gift_card.dart';
 import '../../routes/app_router.dart';
+import '../../widgets/loader.dart';
 
 class GiftScreen extends ConsumerStatefulWidget {
   const GiftScreen({super.key});
@@ -57,8 +58,16 @@ class _GiftScreenState extends ConsumerState<GiftScreen> {
             onStatusChanged: (status) =>
                 setState(() => _selectedStatus = status),
           ),
-          if (isLoading)
-            const Expanded(child: Center(child: CircularProgressIndicator())),
+             if (isLoading)
+               const Expanded(
+                 child: Center(
+                   child: Loader(
+                     text: 'Loading gifts...',
+                     logoSize: 36.0,
+                     backgroundColor: Colors.transparent,
+                   ),
+                 ),
+               ),
           if (error != null) Expanded(child: Center(child: Text(error))),
           if (!isLoading && error == null)
             Expanded(

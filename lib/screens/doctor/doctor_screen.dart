@@ -10,6 +10,7 @@ import '../../providers/doctor_provider.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/loader.dart';
 
 class MyDoctorScreen extends ConsumerStatefulWidget {
   const MyDoctorScreen({super.key});
@@ -131,7 +132,13 @@ class _MyDoctorScreenState extends ConsumerState<MyDoctorScreen> {
               if (isLoading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: Loader(
+                      text: 'Loading your doctors...',
+                      logoSize: 36.0,
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
                 )
               else if (error != null && error.isNotEmpty)
                 Center(

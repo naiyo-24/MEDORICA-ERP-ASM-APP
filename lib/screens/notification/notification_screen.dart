@@ -6,6 +6,7 @@ import '../../cards/notification/notification_card.dart';
 import '../../providers/notification_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
+import '../../widgets/loader.dart';
 
 class NotificationScreen extends ConsumerWidget {
   const NotificationScreen({super.key});
@@ -35,7 +36,11 @@ class NotificationScreen extends ConsumerWidget {
       ),
       body: hasInitialLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              child: Loader(
+                text: 'Loading notifications...',
+                logoSize: 36.0,
+                backgroundColor: Colors.transparent,
+              ),
             )
           : hasBlockingError
           ? _NotificationErrorState(

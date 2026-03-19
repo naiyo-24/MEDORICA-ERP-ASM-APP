@@ -8,6 +8,7 @@ import '../../providers/month_plan_provider.dart';
 import '../../cards/month_plan/calendar_card.dart';
 import '../../cards/month_plan/plan_card.dart';
 import '../../models/team.dart';
+import '../../widgets/loader.dart';
 
 class PlanScreen extends ConsumerStatefulWidget {
   const PlanScreen({super.key});
@@ -118,7 +119,11 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
             if (monthPlanState.isLoading)
               const Expanded(
                 child: Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+                  child: Loader(
+                    text: 'Loading plans...',
+                    logoSize: 36.0,
+                    backgroundColor: Colors.transparent,
+                  ),
                 ),
               )
             else if (monthPlanState.error != null)

@@ -11,6 +11,7 @@ import '../../routes/app_router.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/loader.dart';
 
 class OrderScreen extends ConsumerStatefulWidget {
   const OrderScreen({super.key});
@@ -64,7 +65,13 @@ class _OrderScreenState extends ConsumerState<OrderScreen> {
               // Orders List
               Expanded(
                 child: orderState.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                        child: Loader(
+                          text: 'Loading orders...',
+                          logoSize: 36.0,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      )
                     : filteredOrders.isEmpty
                     ? Center(
                         child: Column(

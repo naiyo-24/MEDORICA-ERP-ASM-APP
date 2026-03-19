@@ -8,6 +8,7 @@ import '../../cards/about_us/about_us_contact_us_card.dart';
 import '../../providers/about_us_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
+import '../../widgets/loader.dart';
 
 class AboutUsScreen extends ConsumerWidget {
   const AboutUsScreen({super.key});
@@ -29,7 +30,11 @@ class AboutUsScreen extends ConsumerWidget {
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              child: Loader(
+                text: 'Loading about us...',
+                logoSize: 36.0,
+                backgroundColor: Colors.transparent,
+              ),
             )
           : error != null
               ? Center(

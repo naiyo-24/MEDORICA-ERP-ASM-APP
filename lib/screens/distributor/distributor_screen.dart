@@ -10,6 +10,7 @@ import '../../providers/distributor_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/loader.dart';
 
 class DistributorScreen extends ConsumerStatefulWidget {
   const DistributorScreen({super.key});
@@ -71,7 +72,13 @@ class _DistributorScreenState extends ConsumerState<DistributorScreen> {
               // Distributor List
               Expanded(
                 child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                        child: Loader(
+                          text: 'Loading distributors...',
+                          logoSize: 36.0,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      )
                     : error != null && distributors.isEmpty
                     ? _DistributorErrorState(
                         message: error,

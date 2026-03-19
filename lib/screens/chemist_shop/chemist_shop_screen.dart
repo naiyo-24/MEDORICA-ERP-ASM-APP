@@ -12,6 +12,8 @@ import '../../widgets/app_bar.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../../widgets/loader.dart';
+
 class ChemistShopScreen extends ConsumerStatefulWidget {
   const ChemistShopScreen({super.key});
 
@@ -69,7 +71,13 @@ class _ChemistShopScreenState extends ConsumerState<ChemistShopScreen> {
               // Body
               Expanded(
                 child: shopState.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                        child: Loader(
+                          text: 'Loading chemist shops...',
+                          logoSize: 36.0,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      )
                     : shopState.error != null
                     ? Center(
                         child: Padding(

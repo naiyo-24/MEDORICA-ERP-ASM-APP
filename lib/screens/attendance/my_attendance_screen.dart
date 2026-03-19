@@ -6,6 +6,7 @@ import '../../widgets/app_bar.dart';
 import '../../cards/attendance/calendar_card.dart';
 import '../../cards/attendance/attendance_details_card.dart';
 import '../../providers/attendance_provider.dart';
+import '../../widgets/loader.dart';
 
 class MyAttendanceScreen extends ConsumerStatefulWidget {
   const MyAttendanceScreen({super.key});
@@ -65,7 +66,13 @@ class _MyAttendanceScreenState extends ConsumerState<MyAttendanceScreen> {
               },
               loading: () => const Padding(
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(
+                  child: Loader(
+                    text: 'Loading attendance...',
+                    logoSize: 36.0,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
               ),
               error: (err, _) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
